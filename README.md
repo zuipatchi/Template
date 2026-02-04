@@ -1,7 +1,8 @@
 # Template
 Unityで新しくゲームを作るときに利用するテンプレート
 
-## 使用ライブラリ
+## 使用Package
+- Addressables
 - R3
 - UniTask
 - VContainer
