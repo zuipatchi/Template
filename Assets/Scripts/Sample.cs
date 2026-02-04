@@ -6,13 +6,13 @@ using System.Threading;
 
 public class Sample : MonoBehaviour
 {
-    [SerializeField] private LoadAsset _loadAsset;
+    private LoadAsset _loadAsset;
     private readonly Subject<Unit> _subject = new();
 
     [Inject]
-    public void Construct()
+    public void Construct(LoadAsset loadAsset)
     {
-        Debug.Log("DIされることがあれば呼ばれる");
+        _loadAsset = loadAsset;
     }
 
     public async UniTask PatiAsync()
@@ -31,7 +31,7 @@ public class Sample : MonoBehaviour
         CancellationToken ct = this.GetCancellationTokenOnDestroy();
 
         _subject
-            .Subscribe(_ => Debug.Log("Start"))
+            .Subscribe(_ => Debug.Log("イベントが発行された"))
             .AddTo(ct);
 
         _subject.OnNext(Unit.Default);

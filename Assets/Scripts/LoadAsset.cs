@@ -1,15 +1,15 @@
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using VContainer.Unity;
 
-public class LoadAsset : MonoBehaviour
+public class LoadAsset: IStartable
 {
     private readonly string _cubeAddressable = "Cube";
     private GameObject _cube;
     public GameObject Cube => _cube;
 
-    private void Start()
+    public void Start()
     {
         LoadCube().Forget();
     }
@@ -17,5 +17,6 @@ public class LoadAsset : MonoBehaviour
     private async UniTask LoadCube()
     {
         _cube = await Addressables.LoadAssetAsync<GameObject>(_cubeAddressable).ToUniTask();
+        Debug.Log("Addressables のロードが完了");
     }
 }
