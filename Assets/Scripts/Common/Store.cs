@@ -3,20 +3,26 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using VContainer.Unity;
 
-public class Store : IStartable
+namespace Scripts.Common
 {
-    private readonly string _cubeAddressable = "Cube";
-    private GameObject _cube;
-    public GameObject Cube => _cube;
-
-    public void Start()
+    /// <summary>
+    /// AddressableAsset をロードしておくクラス
+    /// </summary>
+    public class Store : IStartable
     {
-        LoadCube().Forget();
-    }
+        private readonly string _cubeAddressable = "Cube";
+        private GameObject _cube;
+        public GameObject Cube => _cube;
 
-    private async UniTask LoadCube()
-    {
-        _cube = await Addressables.LoadAssetAsync<GameObject>(_cubeAddressable).ToUniTask();
-        Debug.Log("Addressables のロードが完了");
+        public void Start()
+        {
+            LoadCube().Forget();
+        }
+
+        private async UniTask LoadCube()
+        {
+            _cube = await Addressables.LoadAssetAsync<GameObject>(_cubeAddressable).ToUniTask();
+            Debug.Log("Addressables のロードが完了");
+        }
     }
 }

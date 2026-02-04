@@ -1,10 +1,13 @@
 using VContainer;
 using VContainer.Unity;
 
-public class CommonLifetimeScope : LifetimeScope
+namespace Scripts.Common
 {
-    protected override void Configure(IContainerBuilder builder)
+    public class CommonLifetimeScope : LifetimeScope
     {
-        builder.RegisterEntryPoint<Store>(Lifetime.Singleton).AsSelf();
+        protected override void Configure(IContainerBuilder builder)
+        {
+            builder.RegisterEntryPoint<Store>(Lifetime.Singleton).AsSelf();
+        }
     }
 }

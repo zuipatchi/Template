@@ -3,6 +3,7 @@ using VContainer;
 using Cysharp.Threading.Tasks;
 using R3;
 using System.Threading;
+using Scripts.Common;
 
 public class Sample : MonoBehaviour
 {

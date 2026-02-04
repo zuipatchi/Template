@@ -1,0 +1,40 @@
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace Scripts.Common
+{
+    // 共通シーンをロードするクラス
+    public class CommonSceneLoader : MonoBehaviour
+    {
+        private static bool _loaded = false;
+
+        private async void Awake()
+        {
+            // 2重起動させない
+            if (_loaded) return;
+            _loaded = true;
+
+            var commonScene = SceneManager.GetSceneByBuildIndex(0);
+
+            // 共通シーンが存在しなければAdditiveでロード    
+            if (!commonScene.IsValid())
+            {
+                var token = this.GetCancellationTokenOnDestroy();
+                await SceneManager.LoadSceneAsync(0, LoadSceneMode.Additive).WithCancellation(token);
+                commonScene = SceneManager.GetSceneByBuildIndex(0);
+            }
+
+            // 共通オブジェクトを登録
+            var root = commonScene.GetRootGameObjects();
+            foreach (var obj in root)
+            {
+                if (obj.name == "[CONTENTS]")
+                {
+                    var sound = obj.GetComponentInChildren<SoundManager>();
+                    CommonSceneObjectRegistry.Instance.Register(ObjectKey.Sound, sound.gameObject);
+                }
+            }
+        }
+    }
+}
