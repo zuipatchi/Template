@@ -6,13 +6,13 @@ using System.Threading;
 
 public class Sample : MonoBehaviour
 {
-    private LoadAsset _loadAsset;
+    private Store _store;
     private readonly Subject<Unit> _subject = new();
 
     [Inject]
-    public void Construct(LoadAsset loadAsset)
+    public void Construct(Store store)
     {
-        _loadAsset = loadAsset;
+        _store = store;
     }
 
     public async UniTask PatiAsync()
@@ -20,7 +20,8 @@ public class Sample : MonoBehaviour
         Debug.Log("3秒待つ");
         await UniTask.Delay(3000);
         Debug.Log("3秒経った");
-        var cube = _loadAsset.Cube;
+
+        var cube = _store.Cube;
         Instantiate(cube);
     }
 

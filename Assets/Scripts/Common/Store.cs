@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using VContainer.Unity;
 
-public class LoadAsset: IStartable
+public class Store : IStartable
 {
     private readonly string _cubeAddressable = "Cube";
     private GameObject _cube;
