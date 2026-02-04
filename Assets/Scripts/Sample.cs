@@ -6,6 +6,7 @@ using System.Threading;
 
 public class Sample : MonoBehaviour
 {
+    [SerializeField] private LoadAsset _loadAsset;
     private readonly Subject<Unit> _subject = new();
 
     [Inject]
@@ -19,6 +20,8 @@ public class Sample : MonoBehaviour
         Debug.Log("3秒待つ");
         await UniTask.Delay(3000);
         Debug.Log("3秒経った");
+        var cube = _loadAsset.Cube;
+        Instantiate(cube);
     }
 
     private void Start()
