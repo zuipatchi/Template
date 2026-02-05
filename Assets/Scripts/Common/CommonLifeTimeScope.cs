@@ -7,6 +7,7 @@ namespace Scripts.Common
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.RegisterComponentInHierarchy<SoundPlayer>().AsSelf();
             builder.RegisterEntryPoint<Store>(Lifetime.Singleton).AsSelf();
         }
     }

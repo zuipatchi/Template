@@ -22,18 +22,6 @@ namespace Scripts.Common
             {
                 var token = this.GetCancellationTokenOnDestroy();
                 await SceneManager.LoadSceneAsync(0, LoadSceneMode.Additive).WithCancellation(token);
-                commonScene = SceneManager.GetSceneByBuildIndex(0);
-            }
-
-            // 共通オブジェクトを登録
-            var root = commonScene.GetRootGameObjects();
-            foreach (var obj in root)
-            {
-                if (obj.name == "[CONTENTS]")
-                {
-                    var sound = obj.GetComponentInChildren<SoundPlayer>();
-                    CommonSceneObjectRegistry.Instance.Register(ObjectKey.Sound, sound.gameObject);
-                }
             }
         }
     }

@@ -11,17 +11,21 @@ namespace Scripts.Common
     public class Store : IStartable
     {
         private readonly string _cubeAddressable = "Cube";
-        private GameObject _cube;
+        private readonly string _bgmAddressable = "BGM";
         public GameObject Cube => _cube;
+        public AudioClip BGM => _bgm;
+        private GameObject _cube = null;
+        private AudioClip _bgm = null;
 
         public void Start()
         {
-            LoadCube().Forget();
+            LoadAssets().Forget();
         }
 
-        private async UniTask LoadCube()
+        private async UniTask LoadAssets()
         {
             _cube = await Addressables.LoadAssetAsync<GameObject>(_cubeAddressable).ToUniTask();
+            _bgm = await Addressables.LoadAssetAsync<AudioClip>(_bgmAddressable).ToUniTask();
             Debug.Log("Addressables のロードが完了");
         }
     }

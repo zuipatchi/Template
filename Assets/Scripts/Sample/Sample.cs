@@ -11,12 +11,14 @@ namespace Scripts.Sample
 
     public class Sample : MonoBehaviour
     {
+        private SoundPlayer _soundPlayer;
         private Store _store;
         private readonly Subject<Unit> _subject = new();
 
         [Inject]
-        public void Construct(Store store)
+        public void Construct(SoundPlayer soundPlayer, Store store)
         {
+            _soundPlayer = soundPlayer;
             _store = store;
         }
 
@@ -31,9 +33,6 @@ namespace Scripts.Sample
                 .AddTo(ct);
 
             _subject.OnNext(Unit.Default);
-
-            var sp = CommonSceneObjectRegistry.Instance.GetObject<SoundPlayer>(ObjectKey.Sound);
-            sp.PlayBGM();
         }
 
         private async UniTask PatiAsync()
@@ -42,6 +41,8 @@ namespace Scripts.Sample
             await UniTask.Delay(3000);
             Debug.Log("3秒経った");
 
+            var bgm = _store.BGM;
+            _soundPlayer.PlayBGM(bgm);
             var cube = _store.Cube;
             Instantiate(cube);
         }
