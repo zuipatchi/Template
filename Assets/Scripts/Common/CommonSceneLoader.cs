@@ -31,7 +31,7 @@ namespace Scripts.Common
             {
                 if (obj.name == "[CONTENTS]")
                 {
-                    var sound = obj.GetComponentInChildren<SoundManager>();
+                    var sound = obj.GetComponentInChildren<SoundPlayer>();
                     CommonSceneObjectRegistry.Instance.Register(ObjectKey.Sound, sound.gameObject);
                 }
             }
