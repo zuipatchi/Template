@@ -264,7 +264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RootLifetimeScope
   parentReference:
     TypeName: Scripts.Common.CommonLifetimeScope
-  autoRun: 1
+  autoRun: 0
   autoInjectGameObjects: []
 --- !u!4 &2140557688
 Transform:

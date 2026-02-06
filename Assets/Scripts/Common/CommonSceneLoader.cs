@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VContainer.Unity;
 
 namespace Scripts.Common
 {
@@ -22,6 +23,24 @@ namespace Scripts.Common
             {
                 var token = this.GetCancellationTokenOnDestroy();
                 await SceneManager.LoadSceneAsync(0, LoadSceneMode.Additive).WithCancellation(token);
+            }
+
+            BuildLifetimeScopeInActiveScene();
+        }
+
+        // アクティブなシーンに置いてある LifetimeScope をビルドする
+        private void BuildLifetimeScopeInActiveScene()
+        {
+            var activeScene = SceneManager.GetActiveScene();
+            var rootObjects = activeScene.GetRootGameObjects();
+
+            foreach (var root in rootObjects)
+            {
+                var scopes = root.GetComponentsInChildren<LifetimeScope>(true);
+                foreach (var scope in scopes)
+                {
+                    scope.Build();
+                }
             }
         }
     }
