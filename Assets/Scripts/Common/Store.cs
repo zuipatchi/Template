@@ -10,12 +10,20 @@ namespace Scripts.Common
     /// </summary>
     public class Store : IStartable
     {
-        private readonly string _cubeAddressable = "Cube";
+        // アドレス
         private readonly string _bgmAddressable = "BGM";
-        public GameObject Cube => _cube;
+        private readonly string _cubeAddressable = "Cube";
+        private readonly string _soleAddressable = "Sole";
+
+        // プロパティ
         public AudioClip BGM => _bgm;
-        private GameObject _cube = null;
+        public GameObject Cube => _cube;
+        public AudioClip Sole => _sole;
+
+        // メンバー
         private AudioClip _bgm = null;
+        private GameObject _cube = null;
+        private AudioClip _sole = null;
 
         public void Start()
         {
@@ -26,6 +34,7 @@ namespace Scripts.Common
         {
             _cube = await Addressables.LoadAssetAsync<GameObject>(_cubeAddressable).ToUniTask();
             _bgm = await Addressables.LoadAssetAsync<AudioClip>(_bgmAddressable).ToUniTask();
+            _sole = await Addressables.LoadAssetAsync<AudioClip>(_soleAddressable).ToUniTask();
             Debug.Log("Addressables のロードが完了");
         }
     }

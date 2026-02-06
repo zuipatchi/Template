@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using VContainer;
 using Cysharp.Threading.Tasks;
 using R3;
@@ -35,6 +36,15 @@ namespace Scripts.Sample
             _subject.OnNext(Unit.Default);
         }
 
+        private void Update()
+        {
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                var se = _store.Sole;
+                _soundPlayer.PlaySE(se);
+            }
+        }
+
         private async UniTask PatiAsync()
         {
             Debug.Log("3秒待つ");
@@ -43,8 +53,6 @@ namespace Scripts.Sample
 
             var bgm = _store.BGM;
             _soundPlayer.PlayBGM(bgm);
-            var cube = _store.Cube;
-            Instantiate(cube);
         }
     }
 }
