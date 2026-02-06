@@ -3,12 +3,12 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using VContainer.Unity;
 
-namespace Scripts.Common
+namespace Scripts.Common.Store
 {
     /// <summary>
     /// AddressableAsset をロードしておくクラス
     /// </summary>
-    public class Store : IStartable
+    public class SoundStore : IStartable
     {
         // アドレス
         private readonly string _bgmAddressable = "BGM";

@@ -1,7 +1,7 @@
 using VContainer;
 using VContainer.Unity;
 
-namespace Scripts.Sample
+namespace Scripts.SampleScene
 {
 
     public class SampleLifetimeScope : LifetimeScope

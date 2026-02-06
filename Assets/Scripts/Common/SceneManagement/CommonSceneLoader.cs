@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer.Unity;
 
-namespace Scripts.Common
+namespace Scripts.Common.SceneManagement
 {
     // 共通シーンをロードするクラス
     public class CommonSceneLoader : MonoBehaviour

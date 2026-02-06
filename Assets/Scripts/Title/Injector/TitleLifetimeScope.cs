@@ -1,7 +1,7 @@
 using VContainer;
 using VContainer.Unity;
 
-namespace Scripts.Title
+namespace Scripts.Title.Injector
 {
 
     public class TitleLifetimeScope : LifetimeScope

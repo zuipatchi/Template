@@ -4,20 +4,21 @@ using VContainer;
 using Cysharp.Threading.Tasks;
 using R3;
 using System.Threading;
-using Scripts.Common;
+using Scripts.Common.SoundManagement;
+using Scripts.Common.Store;
 
-namespace Scripts.Sample
+namespace Scripts.SampleScene
 {
 
 
     public class Sample : MonoBehaviour
     {
         private SoundPlayer _soundPlayer;
-        private Store _store;
+        private SoundStore _store;
         private readonly Subject<Unit> _subject = new();
 
         [Inject]
-        public void Construct(SoundPlayer soundPlayer, Store store)
+        public void Construct(SoundPlayer soundPlayer, SoundStore store)
         {
             _soundPlayer = soundPlayer;
             _store = store;
