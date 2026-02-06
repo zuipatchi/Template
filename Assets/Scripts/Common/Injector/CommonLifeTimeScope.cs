@@ -1,9 +1,9 @@
-using Scripts.Common.SoundManagement;
-using Scripts.Common.Store;
+using Common.SoundManagement;
+using Common.Store;
 using VContainer;
 using VContainer.Unity;
 
-namespace Scripts.Common.Injector
+namespace Common.Injector
 {
     public class CommonLifetimeScope : LifetimeScope
     {

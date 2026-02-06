@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using VContainer.Unity;
 
-namespace Scripts.Common.Store
+namespace Common.Store
 {
     /// <summary>
     /// AddressableAsset をロードしておくクラス

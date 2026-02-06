@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Scripts.Common.SoundManagement
+namespace Common.SoundManagement
 {
     /// <summary>
     /// AudioClip を再生するクラス

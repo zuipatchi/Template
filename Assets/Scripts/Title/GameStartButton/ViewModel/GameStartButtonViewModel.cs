@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Scripts.Title.GameStartButton
+namespace Title.GameStartButton
 {
 
     [RequireComponent(typeof(UIDocument))]

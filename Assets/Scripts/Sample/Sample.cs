@@ -4,10 +4,10 @@ using VContainer;
 using Cysharp.Threading.Tasks;
 using R3;
 using System.Threading;
-using Scripts.Common.SoundManagement;
-using Scripts.Common.Store;
+using Common.SoundManagement;
+using Common.Store;
 
-namespace Scripts.SampleScene
+namespace SampleScene
 {
 
 
