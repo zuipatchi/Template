@@ -290,7 +290,7 @@ GameObject:
   - component: {fileID: 1058425109}
   - component: {fileID: 1058425110}
   m_Layer: 0
-  m_Name: LifeTimeScope
+  m_Name: Lifetime Scope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -338,7 +338,7 @@ GameObject:
   - component: {fileID: 1073565415}
   - component: {fileID: 1073565416}
   m_Layer: 0
-  m_Name: SoundPlayer
+  m_Name: Sound Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -421,7 +421,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8396222394263581024, guid: b5dd9e5b9857dc64393c6892fa4d0d1f, type: 3}
       propertyPath: m_Name
-      value: CommonSceneLoader
+      value: Common Scene Loader
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

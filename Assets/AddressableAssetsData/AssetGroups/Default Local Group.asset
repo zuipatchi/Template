@@ -15,14 +15,14 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 2296e1af91e62c84eb2f51cf913da5c3
   m_SerializeEntries:
-  - m_GUID: 4b5b6b00830a4b24d95f75a5249050ff
-    m_Address: Cube
+  - m_GUID: 7069e5405f74953428aab1c2dae935a4
+    m_Address: BGM
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7069e5405f74953428aab1c2dae935a4
-    m_Address: BGM
+  - m_GUID: 7763c03c93678b440ae455e994cc4c9e
+    m_Address: Sole
     m_ReadOnly: 0
     m_SerializedLabels:
     - default
