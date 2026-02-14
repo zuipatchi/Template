@@ -1,0 +1,8 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement picking-mode="Ignore" style="flex-grow: 1;">
+        <ui:Image name="OptionSliders" style="background-image: url(&quot;project://database/Assets/AddressableAssets/Icon/sliders-solid-full.svg?fileID=7388822144124034973&amp;guid=ff539d642a1a86d4aac70aba745fb6cb&amp;type=3#sliders-solid-full&quot;); width: 5%; height: 5%; flex-shrink: 1;"/>
+    </ui:VisualElement>
+    <ui:VisualElement name="ModalOverlay" picking-mode="Ignore" style="position: absolute; justify-content: center; align-self: center; width: 100%; height: 100%; flex-shrink: 0; flex-grow: 1;">
+        <ui:VisualElement name="ModalHost" picking-mode="Ignore" style="flex-grow: 1; flex-shrink: 0;"/>
+    </ui:VisualElement>
+</ui:UXML>
