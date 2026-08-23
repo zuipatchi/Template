@@ -1,0 +1,24 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="Home.uss" />
+    <ui:VisualElement style="flex-grow: 1; align-items: center; justify-content: center;">
+
+        <!-- メインカード -->
+        <ui:VisualElement class="card" style="width: 420px;">
+            <ui:Label text="HOME" class="card__title" />
+            <ui:VisualElement class="divider" />
+            <ui:Button name="GameStartButton" text="ゲーム開始" class="btn-accent" style="margin-bottom: 12px;" />
+            <ui:Button name="CreditButton" text="クレジット" class="btn-secondary" />
+        </ui:VisualElement>
+
+        <!-- クレジットオーバーレイ -->
+        <ui:VisualElement name="CreditOverlay" class="overlay-bg" style="display: none;">
+            <ui:VisualElement class="card" style="width: 420px;">
+                <ui:Label text="クレジット" class="card__title" />
+                <ui:VisualElement class="divider" />
+                <ui:VisualElement name="CreditList" style="margin-bottom: 20px;" />
+                <ui:Button name="CloseCreditButton" text="閉じる" class="btn-secondary" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

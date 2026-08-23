@@ -1,0 +1,29 @@
+/* ─── Option icon ─── */
+.option-layer {
+    flex-grow: 1;
+}
+
+.option-icon {
+    background-image: url("project://database/Assets/AddressableAssets/Icon/sliders-solid-full.svg?fileID=7388822144124034973&guid=ff539d642a1a86d4aac70aba745fb6cb&type=3#sliders-solid-full");
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 60px;
+    height: 60px;
+}
+
+/* ─── Modal overlay ─── */
+.overlay-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+.modal-host {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+}

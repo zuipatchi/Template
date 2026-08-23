@@ -1,0 +1,40 @@
+/* ─── Press Start ─── */
+/* 画面のどこをクリックしてもスタートできるよう、ボタン自体を全画面に広げる。
+   背景は透明なのでラベルだけが中央に見える。
+   右上のオプションアイコンは Common 側の UIDocument（SortingOrder 1000）が
+   前面にあるため、全画面ボタンに覆われてもクリックできる。 */
+.press-start {
+    flex-grow: 1;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    background-color: rgba(0, 0, 0, 0);
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    color: rgb(240, 240, 255);
+    font-size: 28px;
+    letter-spacing: 8px;
+    -unity-text-align: middle-center;
+    padding-top: 8px;
+    padding-right: 16px;
+    padding-bottom: 8px;
+    padding-left: 16px;
+}
+
+.press-start:hover {
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(255, 255, 255);
+}
+
+.press-start:focus {
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(255, 255, 255);
+}
+
+.press-start:active {
+    background-color: rgba(0, 0, 0, 0);
+    scale: 0.97;
+}

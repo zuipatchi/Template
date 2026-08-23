@@ -1,0 +1,137 @@
+/* ─── Modal ─── */
+.modal-card {
+    background-color: rgb(22, 22, 35);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(255, 255, 255, 0.15);
+    border-right-color: rgba(255, 255, 255, 0.15);
+    border-top-color: rgba(255, 255, 255, 0.15);
+    border-bottom-color: rgba(255, 255, 255, 0.15);
+    padding-top: 28px;
+    padding-right: 32px;
+    padding-bottom: 28px;
+    padding-left: 32px;
+    min-width: 360px;
+}
+
+.modal-title {
+    color: rgb(240, 240, 255);
+    font-size: 20px;
+    -unity-text-align: middle-center;
+    margin-bottom: 16px;
+}
+
+.divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+/* ─── Option rows ─── */
+.option-row {
+    margin-bottom: 18px;
+}
+
+.option-row--last {
+    margin-bottom: 24px;
+}
+
+.option-label {
+    color: rgb(180, 180, 210);
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.option-slider {
+    flex-grow: 1;
+}
+
+/* ─── Actions ─── */
+.modal-actions {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.modal-actions__exit {
+    flex-grow: 1;
+    margin-right: 8px;
+}
+
+.modal-actions__close {
+    flex-grow: 1;
+}
+
+/* ─── Buttons ─── */
+.btn-accent {
+    background-color: rgb(70, 90, 180);
+    color: rgb(255, 255, 255);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    font-size: 14px;
+    -unity-text-align: middle-center;
+}
+
+.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.07);
+    color: rgb(230, 230, 245);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgba(255, 255, 255, 0.15);
+    border-right-color: rgba(255, 255, 255, 0.15);
+    border-top-color: rgba(255, 255, 255, 0.15);
+    border-bottom-color: rgba(255, 255, 255, 0.15);
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    font-size: 14px;
+    -unity-text-align: middle-center;
+}
+
+.btn-accent:hover {
+    background-color: rgb(85, 105, 198);
+}
+
+.btn-accent:focus {
+    background-color: rgb(95, 115, 210);
+}
+
+.btn-accent:active {
+    background-color: rgb(50, 65, 145);
+    scale: 0.96;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.13);
+}
+
+.btn-secondary:focus {
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+.btn-secondary:active {
+    background-color: rgba(255, 255, 255, 0.03);
+    scale: 0.96;
+}
