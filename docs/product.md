@@ -16,7 +16,6 @@
 - オプションモーダル（音量設定など）→ [architecture.md](architecture.md)「オプションモーダル」
 - Title 画面（PRESS START の点滅演出・画面のどこをクリックしてもスタート）→ [design-system.md](design-system.md)「タイトル画面のプロンプト」
 - Home 画面（ゲーム開始への導線・クレジット表示）→ [architecture.md](architecture.md)「画面遷移」
-- Live2D Cubism SDK 同梱（`Assets/Live2D/`。モデル配置・アニメーション実装のノウハウ）→ [Live2D.md](Live2D.md)
 
 > 設計・実装ノウハウ系のドキュメント（[design-system.md](design-system.md) / [patterns.md](patterns.md) / [effects.md](effects.md)）は「機能」ではないためこの一覧には載せない。一覧は [CLAUDE.md](../CLAUDE.md)「ドキュメント」を参照。
 

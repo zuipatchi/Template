@@ -95,7 +95,7 @@ Explore エージェントを**観点別に並列で** spawn する（1観点1�
 - 設計逸脱のうち、クラスの分割・DI の再設計・責務の移動といった大きなリファクタになるもの（split-check / duplicate-check の担当領域、または別途の設計判断）
 - パフォーマンス指摘のうち、計測なしに効果を判断できないもの（この環境ではプロファイルできない）
 
-判断材料が足りないときは、聞く前に自分で埋める：該当コードと呼び出し元を読む、`git log -p` で意図的な変更かを確認する、`docs/` の該当ノウハウ（[docs/networking.md](../../docs/networking.md)・[docs/patterns.md](../../docs/patterns.md)・[docs/effects.md](../../docs/effects.md)・[docs/Live2D.md](../../docs/Live2D.md)）を読む。それでも決まらなければ見送る。
+判断材料が足りないときは、聞く前に自分で埋める：該当コードと呼び出し元を読む、`git log -p` で意図的な変更かを確認する、`docs/` の該当ノウハウ（[docs/patterns.md](../../docs/patterns.md)・[docs/effects.md](../../docs/effects.md)）を読む。それでも決まらなければ見送る。
 
 ---
 

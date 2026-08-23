@@ -84,11 +84,8 @@ Unity で新しくゲームを作るときに利用する Unity 6 (6000.3.18f1) 
 - [docs/patterns.md](docs/patterns.md): よく触る実装パターン集（Presenter追加・DI登録・destroyCancellationToken・DOTween×UI Toolkit・シーン追加手順）
 - [docs/effects.md](docs/effects.md): パーティクル・VFX 実装ノウハウ（UI Toolkit との共存・加算ブレンド・worldBound 変換・再生時間調整）
 - [docs/product.md](docs/product.md): プロダクトドキュメント
-- [docs/Live2D.md](docs/Live2D.md): Live2D Cubism SDK のアニメーション実装ノウハウ（**Live2D 関連の実装前に必読**）
 
 ## Asset Store アセット
 
 - Asset Store からダウンロードしたものは `Assets/AssetStore/` に配置する。このディレクトリは Git の管理対象外。
 - DOTween (Demigiant) は `Assets/Plugins/` に配置済み（Git 管理対象）。
-- Live2D Cubism SDK は `Assets/Live2D/` に配置済み（Git 管理対象）。
-  - `Assets/csc.rsp` / `Assets/mcs.rsp` に `-unsafe` フラグが必要（Cubism Core が unsafe コードを使用するため）。

@@ -17,7 +17,6 @@ Unityで新しくゲームを作るときに利用するテンプレート
 - UniTask
 - VContainer
 - DOTween
-- Live2D Cubism SDK（`Assets/Live2D/`、Git 管理対象）
 
 バージョンは [Packages/manifest.json](Packages/manifest.json) を参照。
 
