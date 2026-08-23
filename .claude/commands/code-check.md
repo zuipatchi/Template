@@ -145,12 +145,12 @@ Explore エージェントを**観点別に並列で** spawn する（1観点1�
 ■ 修正した（コミット: a1b2c3d）
   1. [バグ/高] HomePresenter.cs:142
      Subscribe の戻り値を AddTo していなかった → destroyCancellationToken 側で破棄するよう修正
-  2. [規約/中] MatchingService.cs:88
+  2. [規約/中] SoundPlayer.cs:88
      ローカル変数の var を明示型に置き換え
 
 ■ 見送った（判断が必要）
-  3. [設計/中] MatchingService.cs:55（要確認）
-     Service 内で State を直接書き換えており単方向フローから逸脱。Model 経由に変えると
+  3. [設計/中] OptionExitRouter.cs:55（要確認）
+     Router 内で State を直接書き換えており単方向フローから逸脱。Model 経由に変えると
      責務の移動を伴うため見送り。直すなら Model 側に更新メソッドを足す形になる
   4. [パフォーマンス/低] HomePresenter.cs:30
      毎回 Q<T> を呼んでいるが、呼び出し頻度が低く効果が測れないため見送り

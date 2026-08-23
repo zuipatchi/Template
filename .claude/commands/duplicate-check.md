@@ -39,7 +39,7 @@ Explore エージェントを spawn して以下を調査させる。エージ�
   - `root.Q<T>("name")` で同じ要素を別々のメソッドで取得している
 
   **状態判定の重複**
-  - 同じ `MatchingState` の組み合わせ判定が複数メソッドに存在する
+  - 同じ列挙型（シーン種別・UI 状態など）の組み合わせ判定が複数メソッドに存在する
 
 - 各重複について以下を報告させる：
   - **ファイルパスと行番号**（両方の箇所）
@@ -76,7 +76,7 @@ Explore エージェントを spawn して以下を調査させる。エージ�
 修正の優先順位：
 1. **定数の重複** — `private const string` または `private static readonly string` に抽出
 2. **UI クエリの重複** — すでに `Awake` で取得済みのフィールドを使い回す
-3. **状態判定の重複** — `private bool IsXxx(MatchingState state)` などのヘルパーに抽出
+3. **状態判定の重複** — `private bool IsXxx(SomeState state)` などのヘルパーに抽出
 4. **ロジックの重複** — `private async UniTask XxxAsync(...)` に抽出してそれぞれから呼ぶ
 
 修正時の注意：

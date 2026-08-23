@@ -77,7 +77,7 @@ namespace Common.SceneManagement
                 // nextScene をメイン(Active)にする
                 SceneManager.SetActiveScene(nextScene);
 
-                // Common とターゲット以外を全てアンロード（MPM では複数シーンが混在するため）
+                // Common とターゲット以外を全てアンロード（遷移の連打などで複数シーンが残り得るため）
                 List<Scene> toUnload = new();
                 for (int i = 0; i < SceneManager.sceneCount; i++)
                 {

@@ -20,7 +20,7 @@ namespace Common.SceneManagement
             }
         }
 
-        // MPM 対応: FindAnyObjectByType は他プレイヤーのシーンのスコープを誤検出するため全シーンを直接走査する
+        // ロード中シーンのスコープを誤検出しないよう、FindAnyObjectByType ではなく全シーンを直接走査する
         private static void ResolveParentReference(LifetimeScope scope)
         {
             if (scope.parentReference.Object != null) return;
