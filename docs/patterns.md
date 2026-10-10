@@ -236,7 +236,7 @@ public sealed class YourPresenter : IAsyncStartable, ISceneReady
 
 **② Build Settings に登録し、`Scenes` enum と番号を揃える**
 
-File → Build Settings にシーンを追加し、**遷移順に並べ替える**。そのうえで [SceneTransitioner.cs](../Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs) の `Scenes` enum を Build Settings の buildIndex と一致させる。
+File → Build Settings にシーンを追加し、**遷移順に並べ替える**。そのうえで [Scenes.cs](../Assets/Scripts/Common/SceneManagement/Scenes.cs) の `Scenes` enum を Build Settings の buildIndex と一致させる。
 
 ```csharp
 public enum Scenes

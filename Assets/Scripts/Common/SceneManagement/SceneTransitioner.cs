@@ -9,13 +9,6 @@ using VContainer;
 
 namespace Common.SceneManagement
 {
-    public enum Scenes
-    {
-        Common = 0,
-        Title = 1,
-        Home = 2,
-        Main = 3
-    }
     /// <summary>
     /// アクティブシーンを変更するクラス
     /// </summary>
