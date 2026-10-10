@@ -8,7 +8,14 @@ Unityで新しくゲームを作るときに利用するテンプレート
 3. 報告のチェックリストに沿って Unity Editor で確認する（Editor は開いたままになっている）
 4. 気になる点があれば「〇〇が変」と伝えるだけで、2 の流れをもう一度回す
 
-`/feature` を使わずに手で変更した場合は、`/ship` でレビュー・コミット・ドキュメント更新を行う。リポジトリ全体の定期点検には `/code-check`・`/duplicate-check`・`/split-check`・`/docs-review`・`/sync-docs` を使う。
+`/feature` を使わずに手で変更した場合は、`/ship` で同じ検証・ドキュメント更新・コミットを行う。
+
+リポジトリ全体の定期点検には次の 2 つを使う（大きな機能を入れた後や週 1 回など）。
+
+- `/code-check`: コード全体のバグ・規約・設計・パフォーマンス・重複・ファイル分割
+- `/docs-check`: ドキュメント内部の品質と、コードとの食い違い
+
+チェック系スキルの共通方針（途中で確認を求めない・直す／見送るの基準）は [.claude/shared/check-policy.md](.claude/shared/check-policy.md) にまとめてある。
 
 Unity MCP での動作確認には `com.unity.pipeline` パッケージ（[Packages/manifest.json](Packages/manifest.json)）と Unity CLI（`unity` コマンド）が必要。
 

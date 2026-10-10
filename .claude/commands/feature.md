@@ -6,7 +6,7 @@ description: ヒアリング→実装→検証ループ（規約・セルフレ�
 
 ユーザーの指示 1 回で **実装・検証・ドキュメント更新・コミット** まで終わらせ、最後にユーザーが Unity で確認する。
 
-**人の判断が入るのは Phase 1 の承認と、Phase 6 の後の Unity での確認だけ。** Phase 2〜6 の間はユーザーに質問しない。迷った点は「見送り」として Phase 6 の報告に集める（code-check などの他スキルと同じ方針）。
+**人の判断が入るのは Phase 1 の承認と、Phase 6 の後の Unity での確認だけ。** Phase 2〜6 の間はユーザーに質問しない。迷った点は「見送り」として Phase 6 の報告に集める。共通方針は [.claude/shared/check-policy.md](../shared/check-policy.md) に従う。
 
 ```
 Phase 1 ヒアリング（承認）→ Phase 2 実装 → Phase 3 検証ループ（全部通るまで。最大 3 周）
@@ -55,9 +55,9 @@ dotnet format <Project>.csproj --verify-no-changes --no-restore --include <変�
 
 ### 3-2. セルフレビュー（差分のみ）
 
-`git diff` の変更箇所だけを対象に、[code-check](code-check.md) の観点 A〜D（バグ・規約・設計・パフォーマンス）でレビューする。
+`git diff` の変更箇所だけを対象に、[code-check](code-check.md) の観点 A〜F（バグ・規約・設計・パフォーマンス・重複・ファイル分割）でレビューする。
 
-- 直す基準・見送る基準は code-check の Phase 2 と同じ
+- 直す基準・見送る基準は [check-policy.md](../shared/check-policy.md) の共通基準と、code-check の Phase 2 の観点別の基準に従う
 - 呼び出し元や関連クラスを読んで裏付けを取ってから指摘する
 
 ### 3-3. テストコードの実行
@@ -96,7 +96,7 @@ Editor に接続できなかった場合は、MCP の確認を「未実行」と
 
 - `CLAUDE.md`（主要ファイルの場所・規約・テストの注意点）、`docs/`、`README.md` を読み、変更で古くなった記述を直し、新しく追加したクラス・パターン・手順を追記する
 - `docs/product.md` の機能一覧に、追加した機能を載せる
-- 照合のしかたは [sync-docs](sync-docs.md) と同じ（コードを読んで裏付けを取る。コード側の未実装は直さず報告に回す）
+- 照合のしかたは [docs-check](docs-check.md) の観点 B と同じ（コードを読んで裏付けを取る。コード側の未実装は直さず報告に回す）
 
 ---
 
