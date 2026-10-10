@@ -36,7 +36,7 @@ description: Assets/Scripts/ 全体を定期点検し、バグ・規約違反・
 
 ### 観点 B: 規約違反（CLAUDE.md）
 
-`dotnet format` が検出しない規約を中心に目視で探す（`dotnet format` で検出できるものは Phase 3 の自己検証で拾える）。
+命名・`var`・`new()`・readonly・波括弧・using の順序と位置は `dotnet format` で検出できる（Phase 3 の自己検証で拾える）。エージェントには、それ以外の規約（DI 禁止事項・アセット読み込み・UI・USS）を中心に探させる。
 
 - **命名**: フィールドが `_camelCase` でない、型・メソッド・プロパティ・定数が `PascalCase` でない
 - **`var` の使用**、型が明らかな生成で `new()` を使っていない

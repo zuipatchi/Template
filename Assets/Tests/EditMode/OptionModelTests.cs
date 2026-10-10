@@ -82,7 +82,7 @@ namespace Tests.EditMode
         {
             _model.SetBGMVolume(0.8f);
 
-            OptionModel newModel = new OptionModel();
+            OptionModel newModel = new();
             newModel.Start();
 
             Assert.AreEqual(0.8f, newModel.BGMVolume.CurrentValue, 0.001f);

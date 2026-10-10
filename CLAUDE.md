@@ -53,7 +53,7 @@ Unity で新しくゲームを作るときに利用する Unity 6 (6000.3.18f1) 
 - **命名**: 型・メソッド・プロパティ・定数は `PascalCase`、フィールドは `_camelCase`、引数・ローカル変数は `camelCase`
 - **アクセス修飾子必須** (インターフェースメンバー以外のすべてのメンバー)
 
-**スタイル設定として定義されているもの** (severity 未指定のため警告にならない。`dotnet format` が検出するのは using の順序と波括弧の改行位置だけで、`var`・`new()`・readonly・波括弧の省略は検出されない。守ること):
+**スタイル設定として定義されているもの** (severity = warning。`dotnet format` と Stop hook で検出される。Unity Editor のコンパイルでは警告にならない):
 
 - **明示的な型を優先** (`var` は使用しない。`csharp_style_var_*` はすべて false)
 - 型が明らかな生成は `new()` で書く（`VisualElement row = new();`）

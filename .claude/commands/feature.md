@@ -65,7 +65,7 @@ Phase 6 の報告の後に同じ会話で受けた修正依頼（「〇〇が変
 dotnet format <Project>.csproj --verify-no-changes --no-restore --include <変更したファイル...>
 ```
 
-新規 `.cs` は Unity Editor で一度開くまで csproj に含まれないため、3-3 か 3-4 で Editor を起動した後にもう一度実行する。`dotnet format` が検出しない規約（`var`・`new()`・readonly・波括弧の省略）は 3-2 で目視確認する。
+新規 `.cs` は Unity Editor で一度開くまで csproj に含まれないため、3-3 か 3-4 で Editor を起動した後にもう一度実行する。`dotnet format` が検出しない規約（DI 禁止事項・`Resources.Load`・uGUI・インラインスタイルなど）は 3-2 で確認する。
 
 ### 3-2. セルフレビュー（差分のみ）
 
