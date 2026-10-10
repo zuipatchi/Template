@@ -32,7 +32,19 @@ Unity Editor での確認が済んでいないもの。確認できたら削除�
 
 急がないもの。手が空いたときや関連する箇所を触るときに対応する。
 
-（なし）
+### I-08 Addressables のハンドルを解放していない
+- 場所: [AssetStoreBase.cs](../Assets/Scripts/Common/Store/AssetStoreBase.cs) `LoadAsync<T>`
+- 内容: `LoadAsync<T>` はロード結果だけを返してハンドルを捨てているため、`Addressables.Release` を呼べない。SoundStore / ModalStore は Common に常駐し 1 回しかロードしないので通常のプレイでは実害はほぼ無いが、CommonLifetimeScope を作り直す状況（PlayMode テストなど）では参照カウントが積み上がる
+- 直すなら: `AssetStoreBase` でハンドルを保持し、`IDisposable` を実装して `Dispose` で `Addressables.Release` する
+- 推奨: **今は保留し、シーンごとにアセットを読み込んで捨てる Store を作るときに対応する**。今の Store はアプリ終了まで使い続けるアセットしか持たないため、解放する場面が無い
+- 出典: I-04 の保留分（2026-10-10）
+
+### I-09 BGM をすべてメモリに常駐させている
+- 場所: [SoundStore.cs](../Assets/Scripts/Common/Store/SoundStore.cs)、BGM の AudioClip のインポート設定
+- 内容: 起動時に全 BGM（タイトル曲・メイン曲）を読み込み、アプリ終了まで保持している。メモリへの影響は AudioClip の Load Type（Decompress On Load か Streaming か）で大きく変わる
+- 直すなら: BGM の Load Type を Streaming にする。または BGM を使うシーンでだけロードし、離れるときに解放する（I-08 が前提）
+- 推奨: **今は保留し、BGM の曲数が増えたときか、モバイル・WebGL でメモリが問題になったときに、まず Load Type を Streaming にする**。今は 2 曲だけで、計測なしに効果を判断できないため
+- 出典: I-04 の保留分（2026-10-10）
 
 ---
 
