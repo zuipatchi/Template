@@ -25,5 +25,19 @@
     "additionalDirectories": [
       "C:\\Users\\hukad\\.claude"
     ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/dotnet-format-check.sh\"",
+            "timeout": 300,
+            "statusMessage": "dotnet format でコード規約をチェック中..."
+          }
+        ]
+      }
+    ]
   }
 }

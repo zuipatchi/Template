@@ -5,7 +5,7 @@ using VContainer.Unity;
 
 namespace Common.Option
 {
-    public class OptionModel: IStartable
+    public class OptionModel : IStartable
     {
         private const string BGMVolumeKey = "bgmVolume";
         private const string SEVolumeKey = "seVolume";
