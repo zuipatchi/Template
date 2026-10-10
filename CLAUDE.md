@@ -47,17 +47,33 @@ Unity で新しくゲームを作るときに利用する Unity 6 (6000.3.18f1) 
 
 ## コーディング規約 (.editorconfig)
 
-**ビルドエラーとして強制されるもの** (severity = error):
+**エラーとして定義されているもの** (severity = error。IDE と `dotnet format` で検出される。Unity Editor のコンパイルではエラーにならない):
 
 - **命名**: 型・メソッド・プロパティ・定数は `PascalCase`、フィールドは `_camelCase`、引数・ローカル変数は `camelCase`
 - **アクセス修飾子必須** (インターフェースメンバー以外のすべてのメンバー)
 
-**スタイル設定として定義されているもの** (severity 未指定のため警告にもならない。守ること):
+**スタイル設定として定義されているもの** (severity 未指定のため警告にならない。`dotnet format` が検出するのは using の順序と波括弧の改行位置だけで、`var`・`new()`・readonly・波括弧の省略は検出されない。守ること):
 
 - **明示的な型を優先** (`var` は使用しない。`csharp_style_var_*` はすべて false)
+- 型が明らかな生成は `new()` で書く（`VisualElement row = new();`）
 - **readonly フィールド**を可能な限り使用
-- すべてのブロックに波括弧必須、開き波括弧は新しい行に配置
+- すべてのブロックに波括弧必須（単一行の `if (...) return;` も不可）、開き波括弧は新しい行に配置
 - `using` ディレクティブは名前空間の外側に記述し、System ディレクティブを先頭に並べる
+
+## リント (dotnet format)
+
+Unity が生成する csproj に対して `dotnet format` で .editorconfig の規約（空白・using 順序・命名など）をチェックできる。
+
+```bash
+# チェックのみ（自作コードは Common / Title / Home / Main / Tests.EditMode / Tests.PlayMode の各 csproj）
+dotnet format Common.csproj --verify-no-changes --no-restore
+# 自動修正（--include で対象ファイルを絞れる）
+dotnet format Common.csproj --no-restore --include <file>
+```
+
+- `Template.slnx` を指定するとパッケージのコードまでチェックされるため、自作コードの csproj を個別に指定する
+- csproj は Unity が再生成する（新規 .cs は Unity Editor で一度開くまで csproj に含まれない）。設定は csproj ではなく .editorconfig に書く
+- Claude Code の Stop hook（[.claude/hooks/dotnet-format-check.sh](.claude/hooks/dotnet-format-check.sh)）が、作業終了時に変更された .cs を自動チェックする。違反があれば最大 3 回まで修正させ、解消しなければユーザーへ報告させる
 
 ## 主要ファイルの場所
 
@@ -66,13 +82,14 @@ Unity で新しくゲームを作るときに利用する Unity 6 (6000.3.18f1) 
 | Common DI 登録 | [Assets/Scripts/Common/Injector/CommonLifeTimeScope.cs](Assets/Scripts/Common/Injector/CommonLifeTimeScope.cs) |
 | シーン遷移ロジック | [Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs](Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs) |
 | シーン定義（Build Settings の buildIndex と一致させる enum） | [Assets/Scripts/Common/SceneManagement/Scenes.cs](Assets/Scripts/Common/SceneManagement/Scenes.cs) |
-| シーン準備完了通知（任意実装。非同期初期化の完了を待ってからフェードイン） | [Assets/Scripts/Common/SceneManagement/ISceneReady.cs](Assets/Scripts/Common/SceneManagement/ISceneReady.cs) |
-| 遷移演出 | [Assets/Scripts/Common/Transition/TransitionPresenter.cs](Assets/Scripts/Common/Transition/TransitionPresenter.cs) |
+| シーン準備完了通知（任意実装。非同期初期化の完了を待ってからフェードイン。シーン上の MonoBehaviour に実装する。DI 登録だけの純粋 C# クラスは検出されない） | [Assets/Scripts/Common/SceneManagement/ISceneReady.cs](Assets/Scripts/Common/SceneManagement/ISceneReady.cs) |
+| 遷移演出（暗幕が出ている間はクリックを遮断） | [Assets/Scripts/Common/Transition/TransitionPresenter.cs](Assets/Scripts/Common/Transition/TransitionPresenter.cs) |
+| 遷移の暗幕の見た目 | [Assets/Scripts/Common/Transition/Transition.uss](Assets/Scripts/Common/Transition/Transition.uss) |
 | サウンド再生 | [Assets/Scripts/Common/SoundManagement/SoundPlayer.cs](Assets/Scripts/Common/SoundManagement/SoundPlayer.cs) |
 | ボリューム状態モデル | [Assets/Scripts/Common/Option/OptionModel.cs](Assets/Scripts/Common/Option/OptionModel.cs) |
 | オプションモーダル UI バインド | [Assets/Scripts/Common/Option/OptionModalPresenter.cs](Assets/Scripts/Common/Option/OptionModalPresenter.cs) |
 | オプション退出ボタンの分岐（Main は「ゲームをやめる」、他は「タイトルに戻る」） | [Assets/Scripts/Common/Option/OptionExitRouter.cs](Assets/Scripts/Common/Option/OptionExitRouter.cs) |
-| Store 共通基底クラス | [Assets/Scripts/Common/Store/AssetStoreBase.cs](Assets/Scripts/Common/Store/AssetStoreBase.cs) |
+| Store 共通基底クラス（サブクラスは `LoadAsync<T>(address)` でロード） | [Assets/Scripts/Common/Store/AssetStoreBase.cs](Assets/Scripts/Common/Store/AssetStoreBase.cs) |
 | Home 画面の UI バインド | [Assets/Scripts/Home/HomePresenter.cs](Assets/Scripts/Home/HomePresenter.cs) |
 | クレジット項目（担当者名の書き換え先） | [Assets/Scripts/Home/CreditModel.cs](Assets/Scripts/Home/CreditModel.cs) |
 | 日本語フォント（アセット） | [Assets/Font/](Assets/Font/) |
