@@ -60,6 +60,12 @@ namespace Title.GameStartButton
 
         private void OnClickGameStart()
         {
+            // Editor で Title から直接 Play した直後は、LifetimeScope の Build（注入）より先にクリックされうる
+            if (_sceneTransitioner == null)
+            {
+                return;
+            }
+
             StopBlink();
             _gameStartButton.SetEnabled(false);
             _uiSoundPlayer.PlayDecide();

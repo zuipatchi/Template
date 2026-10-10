@@ -17,6 +17,7 @@
 Common (常駐)
   ├── BootLoader              ビルド起動時に Title をロードする
   ├── SoundPlayer / UiSoundPlayer（UI 操作の効果音を「開く・閉じる・決定」で鳴らす窓口）
+  │                           AudioListener も Sound Player に 1 つだけ置く（各シーンのカメラには付けない。遷移中に 2 つにならないように）
   ├── SceneTransitioner
   ├── TransitionPresenter
   ├── OptionPresenter / OptionModel（OptionModalPresenter は OptionPresenter が生成する plain C#）
@@ -104,11 +105,11 @@ OptionModalPresenter
 
 ```csharp
 // 例: SceneBgmPlayer（Common。各シーンの BGM を流す）
-public async UniTask StartAsync(CancellationToken cancellation = default)
+public async UniTask StartAsync(CancellationToken ct = default)
 {
     try
     {
-        await _soundStore.Loaded.AttachExternalCancellation(cancellation);
+        await _soundStore.Loaded.AttachExternalCancellation(ct);
         _soundPlayer.PlayBGM(_soundStore.GetBgm(_bgm));
     }
     catch (OperationCanceledException)

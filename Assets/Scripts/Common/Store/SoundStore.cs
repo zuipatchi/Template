@@ -42,11 +42,13 @@ namespace Common.Store
 
         protected override async UniTask LoadAssetsCore()
         {
-            _mainBGM = await LoadAsync<AudioClip>(_mainBgmAddressable);
-            _titleBGM = await LoadAsync<AudioClip>(_titleBGMAddressable);
-            _cancel1SE = await LoadAsync<AudioClip>(_cancel1SEAddressable);
-            _enter1SE = await LoadAsync<AudioClip>(_enter1SEAddressable);
-            _enter2SE = await LoadAsync<AudioClip>(_enter2SEAddressable);
+            // 互いに依存しないので並列にロードする
+            (_mainBGM, _titleBGM, _cancel1SE, _enter1SE, _enter2SE) = await UniTask.WhenAll(
+                LoadAsync<AudioClip>(_mainBgmAddressable),
+                LoadAsync<AudioClip>(_titleBGMAddressable),
+                LoadAsync<AudioClip>(_cancel1SEAddressable),
+                LoadAsync<AudioClip>(_enter1SEAddressable),
+                LoadAsync<AudioClip>(_enter2SEAddressable));
         }
     }
 }

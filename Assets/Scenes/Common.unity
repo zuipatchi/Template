@@ -519,6 +519,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1073565415}
   - component: {fileID: 1073565416}
+  - component: {fileID: 1073565417}
   m_Layer: 0
   m_Name: Sound Player
   m_TagString: Untagged
@@ -553,6 +554,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed03f1e4591b141479e482387d1bdebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
+--- !u!81 &1073565417
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073565414}
+  m_Enabled: 1
 --- !u!1 &1362257012
 GameObject:
   m_ObjectHideFlags: 0

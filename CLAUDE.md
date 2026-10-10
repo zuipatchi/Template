@@ -80,7 +80,7 @@ dotnet format Common.csproj --no-restore --include <file>
 
 | 用途 | パス |
 |---|---|
-| Common DI 登録 | [Assets/Scripts/Common/Injector/CommonLifeTimeScope.cs](Assets/Scripts/Common/Injector/CommonLifeTimeScope.cs) |
+| Common DI 登録 | [Assets/Scripts/Common/Injector/CommonLifetimeScope.cs](Assets/Scripts/Common/Injector/CommonLifetimeScope.cs) |
 | シーン遷移ロジック | [Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs](Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs) |
 | シーン定義（Build Profiles のシーンリストの buildIndex と一致させる enum） | [Assets/Scripts/Common/SceneManagement/Scenes.cs](Assets/Scripts/Common/SceneManagement/Scenes.cs) |
 | シーン準備完了通知（任意実装。非同期初期化の完了を待ってからフェードイン。シーン上の MonoBehaviour に実装する。DI 登録だけの純粋 C# クラスは検出されない） | [Assets/Scripts/Common/SceneManagement/ISceneReady.cs](Assets/Scripts/Common/SceneManagement/ISceneReady.cs) |

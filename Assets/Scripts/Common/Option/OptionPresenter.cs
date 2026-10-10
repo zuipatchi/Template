@@ -127,12 +127,14 @@ namespace Common.Option
         {
             _uiSoundPlayer.PlayClose();
             CloseModal();
+            _optionModel.Save();
         }
 
         private void OnClickExit()
         {
             _uiSoundPlayer.PlayDecide();
             CloseModal();
+            _optionModel.Save();
             _exitRouter.Execute();
         }
     }

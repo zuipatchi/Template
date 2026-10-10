@@ -31,9 +31,10 @@ MonoBehaviour として配置する場合は `RegisterComponentInHierarchy<YourP
 ```csharp
 private readonly CancellationTokenSource _cts = new();
 
-void IStartable.Start()
+public UniTask StartAsync(CancellationToken ct)
 {
     _model.State.Subscribe(OnChanged).AddTo(_cts.Token);
+    return UniTask.CompletedTask;
 }
 
 public void Dispose()
@@ -243,11 +244,11 @@ public sealed class YourPresenter : MonoBehaviour, ISceneReady
 `Assets/Scenes/<Name>.unity` を作り、既存シーン（[Title.unity](../Assets/Scenes/Title.unity) など）と同じルート構成にする。
 
 ```
-[BOOT]      ├── LifeTime Scope        <Name>LifetimeScope（parentReference = CommonLifetimeScope / autoRun = 0）
+[BOOT]      ├── Lifetime Scope        <Name>LifetimeScope（parentReference = CommonLifetimeScope / autoRun = 0）
             └── Common Scene Loader   CommonSceneLoader プレハブのインスタンス
 [LOGIC]     （純粋ロジック用。空でよい）
 [CONTENTS]  ├── UI                    UIDocument + <Name>Presenter
-            └── MainCamera            Camera + AudioListener + UniversalAdditionalCameraData
+            └── MainCamera            Camera + UniversalAdditionalCameraData（AudioListener は付けない。Common の Sound Player に 1 つだけ置いてある）
 ```
 
 `Common Scene Loader` を置いておくと、そのシーンから直接 Play しても Common シーンがロードされる。

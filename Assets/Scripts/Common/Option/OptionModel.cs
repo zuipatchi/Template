@@ -34,6 +34,13 @@ namespace Common.Option
             SetVolume(_seVolume, SEVolumeKey, value);
         }
 
+        // PlayerPrefs.SetFloat はメモリ上の値を変えるだけなので、強制終了やモバイルのプロセス終了に備えてディスクへ書き出す。
+        // スライダーのドラッグ中に毎回書き出さないよう、モーダルを閉じるときに 1 回だけ呼ぶ
+        public void Save()
+        {
+            PlayerPrefs.Save();
+        }
+
         private static void SetVolume(ReactiveProperty<float> volume, string key, float value)
         {
             volume.Value = Math.Clamp(value, 0, 1);

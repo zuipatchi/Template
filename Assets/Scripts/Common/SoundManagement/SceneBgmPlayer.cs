@@ -24,11 +24,11 @@ namespace Common.SoundManagement
             _bgm = bgm;
         }
 
-        public async UniTask StartAsync(CancellationToken cancellation = default)
+        public async UniTask StartAsync(CancellationToken ct = default)
         {
             try
             {
-                await _soundStore.Loaded.AttachExternalCancellation(cancellation);
+                await _soundStore.Loaded.AttachExternalCancellation(ct);
                 _soundPlayer.PlayBGM(_soundStore.GetBgm(_bgm));
             }
             catch (OperationCanceledException)
