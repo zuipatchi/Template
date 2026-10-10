@@ -28,7 +28,7 @@ Title (アディティブ) → Home (アディティブ) → Main (アディテ�
 - `Common` シーンは起動時にロードされ、以降アンロードされない
 - 他シーンは `Common` の上にアディティブでロード・アンロードされる
 - シーン遷移は `SceneTransitioner.Transit(Scenes next)` を呼ぶだけでよい
-- 遷移時は `TransitionPresenter` が画面をフェードアウト→ロード→フェードインの演出を行う
+- 遷移時は `TransitionPresenter` が画面をフェードアウト→ロード→フェードインの演出を行う。暗幕が出ている間はクリックを遮るため、遷移中に別の遷移（オプションの「タイトルに戻る」など）は始められない
 - `Scenes` enum の値は Build Settings の buildIndex と一致させる（`Common=0 / Title=1 / Home=2 / Main=3`）。シーンを追加・並べ替えるときは enum と Build Settings の両方を揃えること
 
 ### 画面遷移

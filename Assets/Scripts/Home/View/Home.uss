@@ -137,3 +137,27 @@
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.55);
 }
+
+/* ─── Home レイアウト ─── */
+.home-root {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.home-card {
+    width: 420px;
+}
+
+.home-start-button {
+    margin-bottom: 12px;
+}
+
+.credit-list {
+    margin-bottom: 20px;
+}
+
+/* 初期状態は非表示。開閉は HomeView.SetCreditVisible が style.display で切り替える */
+.credit-overlay {
+    display: none;
+}

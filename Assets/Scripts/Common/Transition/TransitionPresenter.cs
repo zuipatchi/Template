@@ -15,20 +15,12 @@ namespace Common.Transition
         private void Awake()
         {
             UIDocument uiDocument = GetComponent<UIDocument>();
-            VisualElement root = uiDocument.rootVisualElement;
-
-            _overlay = new VisualElement
+            // 見た目は Transition.uss の .transition-overlay に定義
+            _overlay = uiDocument.rootVisualElement.Q<VisualElement>("TransitionOverlay");
+            if (_overlay == null)
             {
-                pickingMode = PickingMode.Ignore
-            };
-            _overlay.style.position = Position.Absolute;
-            _overlay.style.width = new Length(100, LengthUnit.Percent);
-            _overlay.style.height = new Length(100, LengthUnit.Percent);
-            _overlay.style.backgroundColor = Color.black;
-            _overlay.style.opacity = 0f;
-            _overlay.style.display = DisplayStyle.None;
-
-            root.Add(_overlay);
+                Debug.LogError("TransitionOverlay が見つかりませんでした。UIDocument に Transition.uxml が割り当てられているか確認してください。");
+            }
         }
 
         private void OnDestroy()
@@ -52,6 +44,9 @@ namespace Common.Transition
             float opacity = from;
             _overlay.style.opacity = opacity;
             _overlay.style.display = DisplayStyle.Flex;
+            // 暗幕が出ている間はクリックを受け止め、下のシーン UI やオプションを操作させない
+            // （遷移中に別の遷移が始まり、暗幕が残ったまま操作不能になるのを防ぐ）
+            _overlay.pickingMode = PickingMode.Position;
 
             _currentTween?.Kill();
             UniTaskCompletionSource tcs = new();
@@ -71,6 +66,7 @@ namespace Common.Transition
                 if (hideOnComplete)
                 {
                     _overlay.style.display = DisplayStyle.None;
+                    _overlay.pickingMode = PickingMode.Ignore;
                 }
                 tcs.TrySetResult();
             })
