@@ -13,7 +13,9 @@
 }
 
 /* ─── Modal overlay ─── */
+/* 初期状態は非表示。開閉は OptionPresenter が style.display で切り替える（モーダルのロード完了前に暗幕が出て入力を遮らないように） */
 .overlay-bg {
+    display: none;
     position: absolute;
     width: 100%;
     height: 100%;

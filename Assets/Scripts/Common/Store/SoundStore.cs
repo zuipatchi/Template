@@ -13,8 +13,6 @@ namespace Common.Store
         private readonly string _enter1SEAddressable = "Sound/SE/Enter1";
         private readonly string _enter2SEAddressable = "Sound/SE/Enter2";
 
-        public AudioClip MainBGM => _mainBGM;
-        public AudioClip TitleBGM => _titleBGM;
         public AudioClip Cancel1SE => _cancel1SE;
         public AudioClip Enter1SE => _enter1SE;
         public AudioClip Enter2SE => _enter2SE;

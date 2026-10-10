@@ -12,7 +12,14 @@
 
 方針が決まれば直せるもの。
 
-（なし）
+### B-11 遷移が異常終了すると暗幕が残り、操作できなくなる
+- 場所: [SceneTransitioner.cs](../Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs) `Transit`
+- 内容: 次の 2 つの場合に、クリックを遮る暗幕が出たまま `RevealAsync` が呼ばれず、ゲームが進められなくなる
+  - **キャンセル以外の例外**: 暗幕を出した後に `BuildLifetimeScopes`（DI の登録漏れ）や `LoadSceneAsync`（Build Profiles に無いシーン）が例外を投げると、`OperationCanceledException` しか catch していないため暗幕が残る。Title / Home のボタンも無効のまま戻らない
+  - **遷移中に元のシーンへの遷移が来た場合**: 実行中の遷移をキャンセルしてから「同じシーンなら何もしない」判定をするため、暗幕を出した後に元のシーンへの `Transit` が来ると、どちらの遷移も暗幕を戻さない。今は暗幕がクリックを遮るので UI からは起きず、コードから呼んだときだけ起きる
+- 選択肢: (a) `catch (Exception e)` で `Debug.LogException` してから `RevealAsync` で暗幕を戻す（オプションの「タイトルに戻る」で復帰できる）、(b) 暗幕を残したままエラー画面を出す、(c) 今のまま（開発中にログで気付ければよい）。2 つ目は、同じシーンの判定を実行中の遷移のキャンセルより前に移す
+- 推奨: **(a) と、同じシーンの判定の前倒しの両方を行う**。同じクラスの `WaitReadySafelyAsync` が「例外で暗幕を残さない」方針を取っており、それに揃えられる。暗幕を戻せば、Common のオプションから「タイトルに戻る」で復帰できる。エラー時の復帰方法は仕様の判断になるため、今回は見送った
+- 出典: /code-check（2026-10-10）
 
 ---
 
@@ -58,3 +65,7 @@ Unity Editor での確認が済んでいないもの。確認できたら削除�
 - **「アクティブシーンが X か」判定のヘルパー化**: 2 か所だけで、OptionExitRouter 側はすでに `IsInMainScene()` にまとまっている
 - **SceneTransitioner の `_runningCts` の Cancel / Dispose 2 行の共通化**: 効果が小さい
 - **CLAUDE.md と architecture.md に R3 の注意点・Scenes enum の値・AssetStore の説明が両方ある**: CLAUDE.md は要約として持っているので許容する
+- **Main.asmdef が使っていない UniTask.Addressables / Addressables / ResourceManager を参照している**: Main はゲーム本体を実装するシーンで、Store を作るときに必要になる。architecture.md の表もこの構成で書いてある
+- **CommonSceneLoader が `gameObject.scene` ではなくアクティブシーンのスコープを構築している**: 今の起動・遷移の流れではどちらも同じシーンを指す。`static _loaded` で最初の 1 つしか動かないため、`gameObject.scene` に変えても複数シーンを開いて Play したときの問題は解決しない
+- **SceneTransitioner.Transit の長さ（約 95 行）・OptionPresenter の依存 4 つ**: どちらも 1 つの責務に収まっている。150 行・141 行で分割の基準（200 行）を下回る
+- **Store のアドレス文字列の `const` 化・既定値と同じ初期化子（`= null` / `= false`）・既存フィールドへの代入での `new()`**: .editorconfig の対象外で、好みの範囲

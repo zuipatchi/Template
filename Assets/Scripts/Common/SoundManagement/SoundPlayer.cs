@@ -63,8 +63,13 @@ namespace Common.SoundManagement
             _bgmAudioSource.Play();
         }
 
+        // SoundStore のロード完了前（起動直後のボタン操作など）は clip が null なので鳴らさない
         public void PlaySE(AudioClip clip)
         {
+            if (clip == null)
+            {
+                return;
+            }
             _seAudioSource.PlayOneShot(clip);
         }
     }

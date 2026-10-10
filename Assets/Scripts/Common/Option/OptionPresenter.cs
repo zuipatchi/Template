@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Common.SoundManagement;
 using Common.Store;
 using Cysharp.Threading.Tasks;
@@ -55,7 +56,7 @@ namespace Common.Option
 
         private void Start()
         {
-            SetupAsync().Forget();
+            SetupAsync(this.GetCancellationTokenOnDestroy()).Forget();
         }
 
         private void OnDestroy()
@@ -63,7 +64,7 @@ namespace Common.Option
             _disposables.Dispose();
         }
 
-        private async UniTask SetupAsync()
+        private async UniTask SetupAsync(CancellationToken ct)
         {
             if (_host == null)
             {
@@ -73,7 +74,12 @@ namespace Common.Option
 
             try
             {
-                await UniTask.WhenAll(_modalStore.Loaded, _uiSoundPlayer.Loaded);
+                await UniTask.WhenAll(_modalStore.Loaded, _uiSoundPlayer.Loaded).AttachExternalCancellation(ct);
+            }
+            catch (OperationCanceledException)
+            {
+                // ロード待ちの間に Destroy されたのは正常系なので何もしない
+                return;
             }
             catch (Exception e)
             {
