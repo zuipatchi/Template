@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Reflection;
 using Common.SceneManagement;
+using Common.SoundManagement;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -63,6 +64,28 @@ namespace Tests.PlayMode
             yield return null;
 
             Assert.IsFalse(button.enabledSelf, "クリック後にボタンが disabled になっていません");
+        }
+
+        [UnityTest]
+        public IEnumerator Titleシーンではタイトル曲が流れる()
+        {
+            yield return CommonSceneTestHelper.WaitForBgm();
+
+            AudioClip expected = CommonSceneTestHelper.ResolveSoundStore().GetBgm(Bgm.Title);
+            Assert.IsNotNull(expected, "タイトル曲がロードされていません");
+            Assert.AreEqual(expected, CommonSceneTestHelper.FindBgmSource().clip);
+        }
+
+        [UnityTest]
+        public IEnumerator オプションの退出ボタンは表示されない()
+        {
+            yield return CommonSceneTestHelper.WaitForOptionModal();
+
+            CommonSceneTestHelper.OpenOptionModal();
+            yield return null;
+
+            Button exitButton = CommonSceneTestHelper.FindInCommon<Button>("ExitButton");
+            Assert.AreEqual(DisplayStyle.None, exitButton.resolvedStyle.display, "Title で退出ボタンが表示されています");
         }
 
         // Title シーン内の UIDocument から GameStartButton を探す

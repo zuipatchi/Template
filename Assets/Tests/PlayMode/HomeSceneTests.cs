@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Reflection;
 using Common.SceneManagement;
+using Common.SoundManagement;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -83,6 +84,29 @@ namespace Tests.PlayMode
             yield return null;
 
             Assert.IsFalse(button.enabledSelf, "クリック後にボタンが disabled になっていません");
+        }
+
+        [UnityTest]
+        public IEnumerator Homeシーンではタイトル曲が流れる()
+        {
+            yield return CommonSceneTestHelper.WaitForBgm();
+
+            AudioClip expected = CommonSceneTestHelper.ResolveSoundStore().GetBgm(Bgm.Title);
+            Assert.IsNotNull(expected, "タイトル曲がロードされていません");
+            Assert.AreEqual(expected, CommonSceneTestHelper.FindBgmSource().clip);
+        }
+
+        [UnityTest]
+        public IEnumerator オプションの退出ボタンはタイトルに戻るとして表示される()
+        {
+            yield return CommonSceneTestHelper.WaitForOptionModal();
+
+            CommonSceneTestHelper.OpenOptionModal();
+            yield return null;
+
+            Button exitButton = CommonSceneTestHelper.FindInCommon<Button>("ExitButton");
+            Assert.AreEqual(DisplayStyle.Flex, exitButton.resolvedStyle.display, "退出ボタンが表示されていません");
+            Assert.AreEqual("タイトルに戻る", exitButton.text);
         }
 
         // NavigationSubmitEvent（Enter/Space キー相当）で Clickable を発火させる

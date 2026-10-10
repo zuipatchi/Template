@@ -24,7 +24,9 @@ Unity で新しくゲームを作るときに利用する Unity 6 (6000.3.18f1) 
 **PlayMode テストの注意点:**
 - `CommonSceneLoader` が `static bool _loaded` を持つため、`[UnityTearDown]` で reflection リセットが必要
 - `IAsyncStartable.StartAsync` は VContainer からキャンセルトークンを受け取るため `catch (OperationCanceledException)` で正常終了させること
-- ボタンクリック模擬は `NavigationSubmitEvent`（`ClickEvent` では Clickable が反応しない）
+- ボタンクリック模擬は `NavigationSubmitEvent`（`ClickEvent` では Clickable が反応しない）。オプションアイコンのように `RegisterCallback<ClickEvent>` で購読している要素は `ClickEvent` を送る
+- Common シーンの要素（オプションモーダル）や BGM を確かめるときは [CommonSceneTestHelper](Assets/Tests/PlayMode/CommonSceneTestHelper.cs) を使う（Addressables のロード完了を待つ処理・`SoundStore` の取得を含む）
+- Unity MCP の `run_tests` で PlayMode を実行するときは `async_tests: true` を付ける（Play モードに入るとドメインリロードで同期の要求が切れるため）
 
 **EditMode テストの注意点:**
 - asmdef の `includePlatforms` は `["Editor"]` にする（空にすると PlayMode テスト扱いになり、EditMode タブや `unity test --mode EditMode` で実行されない）

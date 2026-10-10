@@ -71,5 +71,36 @@ namespace Tests.PlayMode
             Assert.IsNotNull(bgmSource, "BGM AudioSource が見つかりません");
             Assert.IsTrue(bgmSource.isPlaying, "BGMが再生されていません");
         }
+
+        [UnityTest]
+        public IEnumerator 同じ曲でPlayBGMしても頭から再生し直さない()
+        {
+            AudioClip clip = AudioClip.Create("TestBGM", 44100 * 2, 1, 44100, false);
+            _soundPlayer.PlayBGM(clip);
+            yield return null;
+
+            AudioSource bgmSource = System.Array.Find(_go.GetComponents<AudioSource>(), s => s.loop);
+            bgmSource.time = 1f;
+            _soundPlayer.PlayBGM(clip);
+            yield return null;
+
+            Assert.GreaterOrEqual(bgmSource.time, 1f, "同じ曲なのに頭から再生し直されています");
+        }
+
+        [UnityTest]
+        public IEnumerator 別の曲でPlayBGMすると切り替わる()
+        {
+            AudioClip first = AudioClip.Create("FirstBGM", 44100, 1, 44100, false);
+            AudioClip second = AudioClip.Create("SecondBGM", 44100, 1, 44100, false);
+            _soundPlayer.PlayBGM(first);
+            yield return null;
+
+            _soundPlayer.PlayBGM(second);
+            yield return null;
+
+            AudioSource bgmSource = System.Array.Find(_go.GetComponents<AudioSource>(), s => s.loop);
+            Assert.AreEqual(second, bgmSource.clip);
+            Assert.IsTrue(bgmSource.isPlaying, "切り替え後の BGM が再生されていません");
+        }
     }
 }
