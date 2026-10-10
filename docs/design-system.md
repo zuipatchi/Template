@@ -101,7 +101,7 @@ USS クラス定義の実装例は以下を参照。
 - [Assets/Scripts/Common/Transition/Transition.uss](../Assets/Scripts/Common/Transition/Transition.uss) — シーン遷移のフェード暗幕（Common 常駐）
 - [Assets/AddressableAssets/Modal/Modal.uss](../Assets/AddressableAssets/Modal/Modal.uss) — オプションモーダルの中身
 
-USS はスタイルシート単位で読み込まれるため、同じクラス名を複数の USS に定義してよい（`.btn-accent` / `.btn-secondary` / `.divider` は Home.uss と Modal.uss に、`.overlay-bg` は Home.uss と Option.uss に複製されている）。値を変えるときは**全ファイルを揃えて更新すること**。
+USS はスタイルシート単位で読み込まれるため、同じクラス名を複数の USS に定義してよい（`.btn-accent` / `.btn-secondary` / `.divider` は Home.uss と Modal.uss に、`.overlay-bg` は Home.uss と Option.uss に複製されている）。値を変えるときは**全ファイルを揃えて更新すること**。ただし Option.uss の `.overlay-bg` だけは、モーダルのロード完了前に暗幕が出ないよう `display: none` を持つ（揃える対象から除く）。
 
 ### カード（`.card`）
 
@@ -288,7 +288,7 @@ Modal.uss の `.divider` だけは `margin-bottom: 20px`（モーダル内は行
 
 ## オーバーレイ（`.overlay-bg` / `.modal-host`）
 
-モーダル表示ではゲーム画面を暗幕で覆う。暗幕は `position: absolute` で全画面を覆い、中身を中央配置する。
+モーダル表示ではゲーム画面を暗幕で覆う。暗幕は `position: absolute` で全画面を覆い、中身を中央配置する。初期状態の非表示は USS（Option.uss の `.overlay-bg`、Home.uss の `.credit-overlay`）で行い、開閉は C# から `style.display` で切り替える。
 
 ```css
 .overlay-bg {

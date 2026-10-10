@@ -7,7 +7,7 @@
 - **DI・リアクティブを標準** とし、`Find()` や static は使わない
 - **非同期を UniTask** で統一し、キャンセル処理を明示的に行う
 - **アセットは Addressables** で遅延ロードし、`Resources.Load` は使わない
-- **UI は UI Toolkit（UXML）** で構築し、uGUI は使わない
+- **UI は UI Toolkit（UXML）** で構築し、uGUI は使わない（例外は VFX を UI Toolkit より手前に合成する場合のみ。[effects.md](effects.md) を参照）
 
 ---
 
@@ -20,7 +20,7 @@ Common (常駐)
   │                           AudioListener も Sound Player に 1 つだけ置く（各シーンのカメラには付けない。遷移中に 2 つにならないように）
   ├── SceneTransitioner
   ├── TransitionPresenter
-  ├── OptionPresenter / OptionModel（OptionModalPresenter は OptionPresenter が生成する plain C#）
+  ├── OptionPresenter / OptionModel
   └── Store 群（SoundStore / ModalStore ← AssetStoreBase を継承）
 
 Title (アディティブ) → Home (アディティブ) → Main (アディティブ)
@@ -158,7 +158,7 @@ ISceneReady を待つのは `SceneTransitioner.Transit` による遷移だけで
 - BGM: `AudioSource.loop = true`、`PlayBGM()` で差し替え。同じ曲がすでに流れていれば頭から再生し直さない
 - シーンごとの BGM は、各シーンの LifetimeScope に `SceneBgmPlayer` を流す曲（`Bgm` enum）付きで登録して決める: `builder.RegisterEntryPoint<SceneBgmPlayer>(Lifetime.Scoped).WithParameter(Bgm.Main);`。Title と Home は同じ曲なので、Title → Home では途切れずに流れ続ける
 - UI 操作の効果音は `UiSoundPlayer` の `PlayOpen()`（開く）/ `PlayClose()`（閉じる）/ `PlayDecide()`（決定）で鳴らす。どの操作にどの SE を使うかの対応は `UiSoundPlayer` にだけ書く
-- SE: `PlayOneShot()` で重ね再生
+- SE: `PlayOneShot()` で重ね再生。SoundStore のロード前など clip が null のときは鳴らさない（例外にしない）
 - 音量は `OptionModel` が 0–1 で保持し、`BGMVolume` / `SEVolume`（`ReadOnlyReactiveProperty<float>`）で公開する
 - `SoundPlayer` は音量変化を Subscribe して AudioSource に即時反映（`BindVolume`）
 
@@ -194,11 +194,10 @@ Common の `Option/` は Presenter と `Option.uxml` / `Option.uss` を同じフ
   - Main: **「ゲームをやめる」** → Home シーンへ遷移
   - Title: 戻る先が無いので退出ボタンを表示しない（`OptionExitRouter.IsExitAvailable`）
   - モーダルは Common で一度だけ生成して使い回すので、ラベルと表示の差し替えは開くたびに `OptionExitRouter.CurrentLabel` / `IsExitAvailable` を読んで `OptionModalPresenter.SetExit()` で行う
-- モーダルのアセットのロードが終わるまではアイコンを押しても開かない。ロードに失敗した場合はエラーログを出し、オーバーレイとアイコンを非表示にしてオプションを使えなくする（閉じられないオーバーレイを残さないため）
-- オーバーレイ（`rgba(0,0,0,0.55)`）がゲーム画面を暗幕。`picking-mode` は既定（`Position`）にして背後へのクリックを遮る（Title の全画面「PRESS START」などを暗幕越しに押させないため）
-- モーダルカードは画面中央に配置（`align-items: center; justify-content: center`）
+- オーバーレイは Option.uss で初期状態を非表示にしてあり、モーダルと効果音（ModalStore / SoundStore）のロードが終わるまではアイコンを押しても開かない。どちらかのロードに失敗した場合はエラーログを出し、オーバーレイとアイコンを非表示にしてオプションを使えなくする（閉じられないオーバーレイを残さないため）
+- オーバーレイがゲーム画面を暗幕（色と配置は [design-system.md](design-system.md)「オーバーレイ」を参照）。`picking-mode` は既定（`Position`）にして背後へのクリックを遮る（Title の全画面「PRESS START」などを暗幕越しに押させないため）
 - UIDocument の SortingOrder は `1000`（重ね順の一覧は [design-system.md](design-system.md)「UIDocument の設定」を参照）
-- モーダル内 UI バインド（スライダー・ボタン）は `OptionModalPresenter`（plain C# クラス）が担い、`OptionPresenter.SetupAsync()` 内で `new` して使う
+- モーダル内 UI バインド（スライダー・ボタン）は `OptionModalPresenter`（plain C# クラス）が担い、`OptionPresenter.SetupAsync(ct)` 内で `new` して使う（`ct` は Destroy で止まるトークンで、ロード待ちの間に破棄されたら何もしない）
 
 ---
 

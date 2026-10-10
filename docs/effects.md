@@ -38,11 +38,11 @@ int originalCullingMask = mainCam.cullingMask;
 mainCam.cullingMask &= ~(1 << EffectLayer);
 
 // 2. RenderTexture を作成
-RenderTexture rt = new RenderTexture(Screen.width, Screen.height, 0);
+RenderTexture rt = new(Screen.width, Screen.height, 0);
 rt.Create();
 
 // 3. エフェクト専用カメラを作成
-GameObject camObj = new GameObject("EffectCamera");
+GameObject camObj = new("EffectCamera");
 Camera effectCam = camObj.AddComponent<Camera>();
 effectCam.clearFlags = CameraClearFlags.SolidColor;
 effectCam.backgroundColor = Color.black; // 黒=加算で透明になる
@@ -54,7 +54,7 @@ effectCam.farClipPlane = mainCam.farClipPlane;
 camObj.transform.SetPositionAndRotation(mainCam.transform.position, mainCam.transform.rotation);
 
 // 4. Screen Space Overlay Canvas を作成
-GameObject canvasObj = new GameObject("EffectCanvas");
+GameObject canvasObj = new("EffectCanvas");
 Canvas canvas = canvasObj.AddComponent<Canvas>();
 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 canvas.sortingOrder = 100; // シーンの UI（0）より手前、オプション（1000）・遷移の暗幕（2000）より奥
@@ -62,7 +62,7 @@ canvas.sortingOrder = 100; // シーンの UI（0）より手前、オプショ�
 // 5. RawImage で RT を表示（加算ブレンドのカスタムシェーダー必須・下記2参照）
 // ※ Shader.Find はビルドに含まれないため [SerializeField] で参照を保持すること
 // [SerializeField] private Shader _additiveUIShader;
-GameObject imgObj = new GameObject("EffectImage");
+GameObject imgObj = new("EffectImage");
 imgObj.transform.SetParent(canvasObj.transform, false);
 RawImage img = imgObj.AddComponent<RawImage>();
 img.texture = rt;
@@ -138,7 +138,7 @@ Sprite sprite = Sprite.Create(
     new Vector2(0.5f, 0.5f),
     100f);
 
-GameObject bgObj = new GameObject("Background");
+GameObject bgObj = new("Background");
 SpriteRenderer sr = bgObj.AddComponent<SpriteRenderer>();
 sr.sprite = sprite;
 sr.sortingOrder = -10; // エフェクトより後ろ
@@ -194,7 +194,7 @@ float screenRight  = cam.transform.position.x + halfWidth;
 
 ## 6. UI Toolkit の worldBound をワールド座標に変換する
 
-### 問題
+### 現象
 
 `VisualElement.worldBound.center` は **パネル空間の座標**（Y=0 が上）で、`Screen.width` / `Screen.height`（実際の画面ピクセル数）と縮尺が異なる場合がある。
 

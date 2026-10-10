@@ -16,11 +16,19 @@ public sealed class YourPresenter : IAsyncStartable, IDisposable
 {
     public async UniTask StartAsync(CancellationToken ct)
     {
-        try { /* 初期化・購読 */ }
-        catch (OperationCanceledException) { }
+        try
+        {
+            /* 初期化・購読 */
+        }
+        catch (OperationCanceledException)
+        {
+        }
     }
 
-    public void Dispose() { /* 購読解除など */ }
+    public void Dispose()
+    {
+        /* 購読解除など */
+    }
 }
 ```
 
@@ -107,12 +115,17 @@ private async UniTaskVoid BuildAsync()
     {
         await _someTask;
 
-        if (this == null) { return; }   // ← await 後は必ずガード
+        if (this == null)   // ← await 後は必ずガード
+        {
+            return;
+        }
 
         CancellationToken ct = destroyCancellationToken;  // ← ガード後に一度だけキャプチャ
         // 以降は ct を使う
     }
-    catch (OperationCanceledException) { }
+    catch (OperationCanceledException)
+    {
+    }
 }
 ```
 
@@ -131,7 +144,7 @@ UI Toolkit のスタイルプロパティを DOTween ゲッターに直接渡す
 ### NG パターン
 
 ```csharp
-DOTween.To(() => _overlay.style.opacity.value, v => _overlay.style.opacity = v, 1f, 0.25f)
+DOTween.To(() => _overlay.style.opacity.value, v => _overlay.style.opacity = v, 1f, 0.25f);
 ```
 
 スタイルプロパティの `.value` を毎フレーム読み取るため、前フレームの状態に依存して初期値が不正になることがある。
@@ -144,7 +157,7 @@ DOTween.To(
     () => opacity,
     v => { opacity = v; _overlay.style.opacity = v; },
     1f, 0.25f
-)
+);
 ```
 
 ローカル float 変数を「仲介」として使うことで初期値が確定し、`OnComplete` が確実に発火する。
@@ -158,8 +171,15 @@ DOTween.To(
 **開始を `OnEnable`、破棄を `OnDisable` に対応させ、停止時にスタイルを既定値へ戻す**（半透明のまま固まるのを防ぐ）。
 
 ```csharp
-private void OnEnable()  { StartBlink(); }
-private void OnDisable() { StopBlink(); }
+private void OnEnable()
+{
+    StartBlink();
+}
+
+private void OnDisable()
+{
+    StopBlink();
+}
 
 private void StartBlink()
 {
@@ -179,7 +199,10 @@ private void StopBlink()
 {
     _blinkTween?.Kill();
     _blinkTween = null;
-    if (_label != null) { _label.style.opacity = 1f; }
+    if (_label != null)
+    {
+        _label.style.opacity = 1f;
+    }
 }
 ```
 

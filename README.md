@@ -16,7 +16,7 @@ Unityで新しくゲームを作るときに利用するテンプレート
 - `/code-check`: コード全体のバグ・規約・設計・パフォーマンス・重複・ファイル分割
 - `/docs-check`: ドキュメント内部の品質と、コードとの食い違い
 
-チェック系スキルの共通方針（途中で確認を求めない・直す／見送るの基準）は [.claude/shared/check-policy.md](.claude/shared/check-policy.md) にまとめてある。見送った項目と Unity での確認待ちは [docs/tech-backlog.md](docs/tech-backlog.md) に溜まるので、時間があるときに目を通して「決定: 〜」と書き足せば、次の作業で対応される。
+チェック系スキル（`/feature`・`/ship`・`/code-check`・`/docs-check`）の共通方針（途中で確認を求めない・直す／見送るの基準）は [.claude/shared/check-policy.md](.claude/shared/check-policy.md) にまとめてある。見送った項目と Unity での確認待ちは [docs/tech-backlog.md](docs/tech-backlog.md) に溜まるので、時間があるときに目を通して「決定: 〜」と書き足せば、次の作業で対応される。
 
 Unity MCP での動作確認には `com.unity.pipeline` パッケージ（[Packages/manifest.json](Packages/manifest.json)）と Unity CLI（`unity` コマンド）が必要。
 
@@ -27,7 +27,7 @@ Unity MCP での動作確認には `com.unity.pipeline` パッケージ（[Packa
 - VContainer
 - DOTween
 
-バージョンは [Packages/manifest.json](Packages/manifest.json) を参照。
+バージョンは [Packages/manifest.json](Packages/manifest.json) を参照（DOTween は manifest.json ではなく `Assets/Plugins/` に同梱）。
 
 ## プラットフォーム
 Windows / Mac / WebGL のいずれでもビルドできる。

@@ -53,6 +53,13 @@ Unity Editor での確認が済んでいないもの。確認できたら削除�
 - 推奨: **今は保留し、BGM の曲数が増えたときか、モバイル・WebGL でメモリが問題になったときに、まず Load Type を Streaming にする**。今は 2 曲だけで、計測なしに効果を判断できないため
 - 出典: I-04 の保留分（2026-10-10）
 
+### I-10 EditMode テストの asmdef が直接使っていないアセンブリを参照している
+- 場所: [Tests.EditMode.asmdef](../Assets/Tests/EditMode/Tests.EditMode.asmdef)（R3.Unity・UniTask の GUID）
+- 内容: CLAUDE.md「EditMode テストの注意点」は「`references` にはテストコードが直接使う型のアセンブリだけを入れる」としているが、今のテスト（CreditModelTests / OptionModelTests）は R3.Unity と UniTask の型を直接使っていない（R3 は `precompiledReferences` の R3.dll から来ている）
+- 直し方: 2 つの参照を外して EditMode テストを実行し、コンパイルと実行が通ることを確かめる
+- 推奨: **次に EditMode テストを追加・変更するときに、参照を外してテストを実行する**。外してもコンパイルが通るかは Unity で実行しないと確かめられないため
+- 出典: /docs-check（2026-10-10）
+
 ---
 
 ## 検討済み・対応しない
@@ -69,3 +76,7 @@ Unity Editor での確認が済んでいないもの。確認できたら削除�
 - **CommonSceneLoader が `gameObject.scene` ではなくアクティブシーンのスコープを構築している**: 今の起動・遷移の流れではどちらも同じシーンを指す。`static _loaded` で最初の 1 つしか動かないため、`gameObject.scene` に変えても複数シーンを開いて Play したときの問題は解決しない
 - **SceneTransitioner.Transit の長さ（約 95 行）・OptionPresenter の依存 4 つ**: どちらも 1 つの責務に収まっている。150 行・141 行で分割の基準（200 行）を下回る
 - **Store のアドレス文字列の `const` 化・既定値と同じ初期化子（`= null` / `= false`）・既存フィールドへの代入での `new()`**: .editorconfig の対象外で、好みの範囲
+- **ドキュメント間で重なる短い説明**（ISceneReady は MonoBehaviour だけが検出される・オプション退出ボタンの分岐・PlayMode テストの `_loaded` リセット）: CLAUDE.md の表と注意点は要約として持ち、詳細は architecture.md / patterns.md に置く
+- **購読解除・注入タイミング・Destroy トークンの書き方が architecture.md と patterns.md で異なる**: 純粋 C# と MonoBehaviour、`destroyCancellationToken` と `GetCancellationTokenOnDestroy()` はどちらも正しく動き、場面に応じた書き分けになっている
+- **docs のコード例の一部が断片になっている**（未定義の変数・`await` の無い `async`）: 説明したい箇所だけを抜き出した例として許容する
+- **新規シーンの階層図の GameObject 名と実シーンの名前の違い**（`Lifetime Scope` / `LifeTime Scope`、`MainCamera` / `Main Camera`）: 名前は動作に影響しない
