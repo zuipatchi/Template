@@ -81,7 +81,7 @@ Unity で新しくゲームを作るときに利用する Unity 6 (6000.3.18f1) 
 
 - [docs/architecture.md](docs/architecture.md): アーキテクチャドキュメント
 - [docs/design-system.md](docs/design-system.md): UIデザインシステム（カラー・タイポグラフィ・コンポーネント）
-- [docs/patterns.md](docs/patterns.md): よく触る実装パターン集（Presenter追加・DI登録・destroyCancellationToken・DOTween×UI Toolkit・シーン追加手順）
+- [docs/patterns.md](docs/patterns.md): よく触る実装パターン集（Presenter追加・DI登録・destroyCancellationToken・DOTween×UI Toolkit・ISceneReady・シーン追加手順）
 - [docs/effects.md](docs/effects.md): パーティクル・VFX 実装ノウハウ（UI Toolkit との共存・加算ブレンド・worldBound 変換・再生時間調整）
 - [docs/product.md](docs/product.md): プロダクトドキュメント
 

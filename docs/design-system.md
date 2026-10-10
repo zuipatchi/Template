@@ -57,7 +57,7 @@ Common シーンのオプションアイコン（`right:0 / top:0`、60×60px）
 | ラベル（項目名） | `13px` | normal |
 | ボタンテキスト | `14px` | normal |
 
-> 既定フォントが NotoSansJP **Bold** なので、`-unity-font-style: bold` を重ねると faux bold で太くなりすぎる。原則 normal のまま使う。
+> 既定フォントが NotoSansJP **Bold** なので、原則 normal のまま使う（理由は下記「日本語フォント」参照）。
 
 ### 文字色とコントラスト
 
@@ -68,7 +68,7 @@ SDF フォントはエッジをアンチエイリアスで描画するため、*
 ゲーム全体の既定フォントは **NotoSansJP Bold (SDF)** で、テーマ [UnityDefaultRuntimeTheme.tss](../Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss) の `.unity-text-element` に `-unity-font-definition` を設定して全テキスト要素（Label / Button 等）へ継承させている。**Label ごとにインラインで `-unity-font` を指定する必要はない**。
 
 - フォントアセット: [Assets/Font/NotoSansJP-Bold SDF.asset](../Assets/Font/NotoSansJP-Bold%20SDF.asset)（Atlas Population Mode = Dynamic。未収録グリフは実行時にソース TTF [NotoSansJP-Bold.ttf](../Assets/Font/NotoSansJP-Bold.ttf) から補完される）
-- 太さは Bold (700) で焼いてあるため、`-unity-font-style: bold` を重ねると faux bold で過剰に太くなる場合がある。見出しをさらに強調したいときのみ使う。
+- 太さは Bold (700) で焼いてあるため、`-unity-font-style: bold` を重ねると faux bold で過剰に太くなる。原則 normal のまま使い、見出しをさらに強調したいときのみ使う。
 - 別の太さ・別フォントに差し替える場合は、新しい SDF を作って TSS の url を差し替える（または PanelSettings の Text Settings に PanelTextSettings を割り当てる）。
 
 > **WebGL では NotoSansJP に無い記号は豆腐（□）になる**。絵文字・ディングバット系（鉛筆 `✎`、`✕`、小三角 `▾` など）はこのフォントに未収録で、**エディタでは OS フォントへフォールバックして見えても WebGL ビルドでは豆腐になる**。閉じる＝`×`(U+00D7)、ドロップダウン矢印＝`▼`(U+25BC) のように収録済みグリフを使うか、画像アイコン（USS `background-image`）／テキストに置き換える。矢印（→←↑↓）・三点リーダ（…）・星（★☆）・●■・引用符は収録済み。
@@ -157,7 +157,7 @@ Modal.uss の `.divider` だけは `margin-bottom: 20px`（モーダル内は行
 /* セカンダリボタン（補助アクション） */
 .btn-secondary {
     background-color: rgba(255, 255, 255, 0.07);
-    color: rgb(230, 230, 245); /* btn-accent と見た目の太さを揃えるため明るめ。下記「文字色とコントラスト」参照 */
+    color: rgb(230, 230, 245); /* btn-accent と見た目の太さを揃えるため明るめ。上記「文字色とコントラスト」参照 */
     border-top-left-radius: 8px; /* 他3角も同じ */
     border-left-width: 1px; /* 他3辺も同じ */
     border-left-color: rgba(255, 255, 255, 0.15); /* 他3辺も同じ */
@@ -226,7 +226,7 @@ private static void AddButtonHoverEffect(Button button, Color baseColor)
 
 ### 空状態（`.empty-state`）
 
-リストが 0 件のときに代わりに出す一行メッセージ（「ルームがありません」など）。本文色よりさらに落とした色にする。
+リストが 0 件のときに代わりに出す一行メッセージ（「項目がありません」など）。本文色よりさらに落とした色にする。
 
 ```css
 .empty-state {
@@ -373,7 +373,7 @@ private static void AddButtonHoverEffect(Button button, Color baseColor)
     background-color: rgba(0, 0, 0, 0.55);
 }
 
-/* 暗幕の上に出す見出し（「相手を待っています…」など） */
+/* 暗幕の上に出す見出し（「読み込み中…」など） */
 .overlay-label {
     font-size: 18px;
     color: rgb(240, 240, 255);

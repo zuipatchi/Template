@@ -26,7 +26,7 @@ public sealed class YourPresenter : IAsyncStartable, IDisposable
 
 MonoBehaviour として配置する場合は `RegisterComponentInHierarchy<YourPresenter>()` を使う。
 
-純粋 C# クラスには `destroyCancellationToken` が無いので、R3 の購読はフィールドの `CancellationTokenSource` に紐づけて `Dispose` で切る（実装例は [DisconnectionHandler](../Assets/Scripts/Main/DisconnectionHandler.cs)）:
+純粋 C# クラスには `destroyCancellationToken` が無いので、R3 の購読はフィールドの `CancellationTokenSource` に紐づけて `Dispose` で切る:
 
 ```csharp
 private readonly CancellationTokenSource _cts = new();
@@ -187,7 +187,7 @@ private void StopBlink()
 
 ## 4. シーン表示前に非同期初期化を待つ（ISceneReady）
 
-Addressables ロードやネットワーク初期化など「フェードイン前に終わらせたい処理」がある場合、
+Addressables ロードなど「フェードイン前に終わらせたい処理」がある場合、
 そのシーンの Presenter（や任意の MonoBehaviour）に `ISceneReady` を実装する。
 `SceneTransitioner` がフェードイン前に、次シーン内の **全** `ISceneReady` 実装の `ReadyAsync` を
 `UniTask.WhenAll` で待機する（実装が無いシーンは素通り）。
@@ -212,7 +212,7 @@ public sealed class YourPresenter : IAsyncStartable, ISceneReady
 }
 ```
 
-> `ReadyAsync` がキャンセル以外の例外を投げても、`SceneTransitioner` 側でログ出力して握りつぶしフェードインは継続する（暗幕が残らない）。初期化失敗の扱いは `ReadyAsync` 内で完結させること。
+> 例外を投げた場合の挙動は [architecture.md](architecture.md)「ISceneReady — シーン準備完了の通知」を参照。
 
 ---
 

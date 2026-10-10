@@ -32,6 +32,7 @@ UI Toolkit の `PanelSettings` デフォルトは `ScreenSpaceOverlay` モード
 // 1. メインカメラからエフェクトレイヤーを除外
 const int EffectLayer = 6; // TagManager.asset で任意の名前に設定
 Camera mainCam = Camera.main;
+int originalCullingMask = mainCam.cullingMask;
 mainCam.cullingMask &= ~(1 << EffectLayer);
 
 // 2. RenderTexture を作成
@@ -161,7 +162,9 @@ private static void SetLayerRecursive(GameObject go, int layer)
 {
     go.layer = layer;
     foreach (Transform child in go.transform)
+    {
         SetLayerRecursive(child.gameObject, layer);
+    }
 }
 ```
 
@@ -242,8 +245,8 @@ ParticleSystem の **Duration**（プレハブ YAML では `lengthInSec`）は�
 
 見た目・軌跡を維持したまま再生時間だけ縮めたいときは、各 ParticleSystem の **`simulationSpeed`** を上げる。**値が大きいほど短く（速く）**なる。
 
-- 体感の終了時間 ≈ `(Duration + 最大 startLifetime) / simulationSpeed`
-- 目標時間に合わせるなら `simulationSpeed = (Duration + 最大 startLifetime) / 目標秒数`
+- 体感の終了時間 ≈ `等速時の長さ / simulationSpeed`。等速時の長さは、連続放出なら `Duration + 最大 startLifetime`、バースト放出なら `max(Duration, 最大 startLifetime)`（下記「コード側の注意」参照）
+- 目標時間に合わせるなら `simulationSpeed = 等速時の長さ / 目標秒数`
 - マルチ ParticleSystem 構成（ルート＋子）の場合は**全システムに同じ値**を設定すると相対タイミングを保ったまま一律に圧縮できる
 
 プレハブ YAML を直接編集する場合（Asset Store アセットなど）は、全 ParticleSystem の `simulationSpeed:` を書き換える。**Unity 起動中の外部編集は自動反映されないことがある** → Unity をフォーカスするか、対象を右クリック →「Reimport」。
