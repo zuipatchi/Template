@@ -204,40 +204,6 @@ private static void AddButtonHoverEffect(Button button, Color baseColor)
 .action-button:active { scale: 0.94 0.94; }
 ```
 
-### リスト項目（`.room-item`）
-
-```css
-.room-item {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-top-left-radius: 8px; /* 他3角も同じ */
-    border-left-width: 1px; /* 他3辺も同じ */
-    border-left-color: rgba(255, 255, 255, 0.1); /* 他3辺も同じ */
-    padding-top: 14px; padding-right: 16px; padding-bottom: 14px; padding-left: 16px;
-    margin-bottom: 8px;
-    color: rgb(180, 180, 210);
-    font-size: 14px;
-    -unity-text-align: middle-left;
-}
-.room-item:hover {
-    background-color: rgba(70, 90, 180, 0.2);
-    border-left-color: rgba(70, 90, 180, 0.5); /* 他3辺も同じ */
-}
-```
-
-### 空状態（`.empty-state`）
-
-リストが 0 件のときに代わりに出す一行メッセージ（「項目がありません」など）。本文色よりさらに落とした色にする。
-
-```css
-.empty-state {
-    color: rgb(120, 120, 150);
-    font-size: 14px;
-    -unity-text-align: middle-center;
-    margin-top: 32px;
-    margin-bottom: 32px;
-}
-```
-
 ### モーダル（`.modal-card` / `.modal-title` / `.option-row` / `.modal-actions`）
 
 オプションモーダル（[Modal.uss](../Assets/AddressableAssets/Modal/Modal.uss)）の構成クラス。`.card` とは別定義で、パディングだけ `28px 32px` と縦を詰めている。
@@ -344,10 +310,6 @@ private static void AddButtonHoverEffect(Button button, Color baseColor)
 | `:focus` | `rgba(255, 255, 255, 0.18)` | — |
 | `:active` | `rgba(255, 255, 255, 0.03)` | `0.96` |
 
-**リスト項目（`.room-item` など）**
-
-`:active` はボタンより控えめに `scale: 0.98` とし、背景のアクセントカラー透明度を上げる。
-
 ### USS スニペット
 
 ```css
@@ -359,9 +321,9 @@ private static void AddButtonHoverEffect(Button button, Color baseColor)
 
 ---
 
-## オーバーレイ（`.overlay-bg` / `.overlay-label` / `.modal-host`）
+## オーバーレイ（`.overlay-bg` / `.modal-host`）
 
-モーダル表示・ローディング表示ではゲーム画面を暗幕で覆う。暗幕は `position: absolute` で全画面を覆い、中身を中央配置する。
+モーダル表示ではゲーム画面を暗幕で覆う。暗幕は `position: absolute` で全画面を覆い、中身を中央配置する。
 
 ```css
 .overlay-bg {
@@ -371,14 +333,6 @@ private static void AddButtonHoverEffect(Button button, Color baseColor)
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.55);
-}
-
-/* 暗幕の上に出す見出し（「読み込み中…」など） */
-.overlay-label {
-    font-size: 18px;
-    color: rgb(240, 240, 255);
-    -unity-text-align: middle-center;
-    margin-bottom: 24px;
 }
 
 /* 暗幕の中でモーダルを受け取るコンテナ（Option.uss。C# から中身を Add する） */
