@@ -20,7 +20,7 @@ namespace Common.SceneManagement
             }
             _loaded = true;
 
-            Scene commonScene = SceneManager.GetSceneByBuildIndex(0);
+            Scene commonScene = SceneManager.GetSceneByBuildIndex((int)Scenes.Common);
 
             // 共通シーンが存在しなければAdditiveでロード
             if (!commonScene.IsValid())
@@ -28,7 +28,7 @@ namespace Common.SceneManagement
                 CancellationToken token = this.GetCancellationTokenOnDestroy();
                 try
                 {
-                    await SceneManager.LoadSceneAsync(0, LoadSceneMode.Additive).WithCancellation(token);
+                    await SceneManager.LoadSceneAsync((int)Scenes.Common, LoadSceneMode.Additive).WithCancellation(token);
                     // Common シーンの LifetimeScope.Awake() が完了するまで1フレーム待つ
                     await UniTask.NextFrame(token);
                 }

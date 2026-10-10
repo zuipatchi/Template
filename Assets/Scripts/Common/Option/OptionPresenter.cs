@@ -77,7 +77,7 @@ namespace Common.Option
             _modalPresenter.Setup(modal, _disposables);
 
             _host.Add(modal);
-            _overlay.style.display = DisplayStyle.None;
+            CloseModal();
         }
 
         private void OpenModal()

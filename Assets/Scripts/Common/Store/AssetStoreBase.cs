@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using VContainer.Unity;
 
 namespace Common.Store
@@ -32,5 +33,10 @@ namespace Common.Store
         }
 
         protected abstract UniTask LoadAssetsCore();
+
+        protected static UniTask<T> LoadAsync<T>(string address)
+        {
+            return Addressables.LoadAssetAsync<T>(address).ToUniTask();
+        }
     }
 }

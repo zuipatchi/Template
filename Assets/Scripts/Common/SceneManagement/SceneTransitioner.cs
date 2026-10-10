@@ -108,12 +108,9 @@ namespace Common.SceneManagement
                 // 新シーンが非同期初期化を持つ場合は完了を待ってからフェードインする。
                 // ISceneReady を実装したコンポーネントを全て待機（無ければ素通り）。
                 List<UniTask> readyTasks = new();
-                foreach (GameObject rootGo in nextScene.GetRootGameObjects())
+                foreach (ISceneReady sceneReady in nextScene.GetComponentsInScene<ISceneReady>())
                 {
-                    foreach (ISceneReady sceneReady in rootGo.GetComponentsInChildren<ISceneReady>(true))
-                    {
-                        readyTasks.Add(WaitReadySafelyAsync(sceneReady, ct));
-                    }
+                    readyTasks.Add(WaitReadySafelyAsync(sceneReady, ct));
                 }
                 if (readyTasks.Count > 0)
                 {

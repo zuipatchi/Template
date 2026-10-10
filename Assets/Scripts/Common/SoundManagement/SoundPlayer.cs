@@ -30,16 +30,20 @@ namespace Common.SoundManagement
             _bgmAudioSource = gameObject.AddComponent<AudioSource>();
             _bgmAudioSource.loop = true;
 
-            _optionModel.BGMVolume
-                .Subscribe(v => _bgmAudioSource.volume = v * VolumeScale)
-                .AddTo(_disposables);
+            BindVolume(_bgmAudioSource, _optionModel.BGMVolume);
 
             _seAudioSource = gameObject.AddComponent<AudioSource>();
             _seAudioSource.playOnAwake = false;
             _seAudioSource.loop = false;
 
-            _optionModel.SEVolume
-                .Subscribe(v => _seAudioSource.volume = v * VolumeScale)
+            BindVolume(_seAudioSource, _optionModel.SEVolume);
+        }
+
+        // OptionModel の音量を AudioSource に反映し続ける
+        private void BindVolume(AudioSource audioSource, ReadOnlyReactiveProperty<float> volume)
+        {
+            volume
+                .Subscribe(v => audioSource.volume = v * VolumeScale)
                 .AddTo(_disposables);
         }
 

@@ -1,5 +1,4 @@
 using Cysharp.Threading.Tasks;
-using UnityEngine.AddressableAssets;
 using UnityEngine.UIElements;
 
 namespace Common.Store
@@ -16,7 +15,7 @@ namespace Common.Store
 
         protected override async UniTask LoadAssetsCore()
         {
-            _modal = await Addressables.LoadAssetAsync<VisualTreeAsset>(_modalAddressable).ToUniTask();
+            _modal = await LoadAsync<VisualTreeAsset>(_modalAddressable);
         }
     }
 }

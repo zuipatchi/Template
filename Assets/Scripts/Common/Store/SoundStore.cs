@@ -1,6 +1,5 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace Common.Store
 {
@@ -31,12 +30,12 @@ namespace Common.Store
 
         protected override async UniTask LoadAssetsCore()
         {
-            _mainBGM = await Addressables.LoadAssetAsync<AudioClip>(_mainBgmAddressable).ToUniTask();
-            _titleBGM = await Addressables.LoadAssetAsync<AudioClip>(_titleBGMAddressable).ToUniTask();
-            _cancel1SE = await Addressables.LoadAssetAsync<AudioClip>(_cancel1SEAddressable).ToUniTask();
-            _enter1SE = await Addressables.LoadAssetAsync<AudioClip>(_enter1SEAddressable).ToUniTask();
-            _enter2SE = await Addressables.LoadAssetAsync<AudioClip>(_enter2SEAddressable).ToUniTask();
-            _resultSE = await Addressables.LoadAssetAsync<AudioClip>(_resultSEAddressable).ToUniTask();
+            _mainBGM = await LoadAsync<AudioClip>(_mainBgmAddressable);
+            _titleBGM = await LoadAsync<AudioClip>(_titleBGMAddressable);
+            _cancel1SE = await LoadAsync<AudioClip>(_cancel1SEAddressable);
+            _enter1SE = await LoadAsync<AudioClip>(_enter1SEAddressable);
+            _enter2SE = await LoadAsync<AudioClip>(_enter2SEAddressable);
+            _resultSE = await LoadAsync<AudioClip>(_resultSEAddressable);
         }
     }
 }

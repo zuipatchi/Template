@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer.Unity;
@@ -9,16 +10,26 @@ namespace Common.SceneManagement
     {
         internal static void BuildLifetimeScopes(this Scene scene)
         {
+            foreach (LifetimeScope scope in scene.GetComponentsInScene<LifetimeScope>())
+            {
+                if (scope.Container != null)
+                {
+                    continue;
+                }
+                ResolveParentReference(scope);
+                scope.Build();
+            }
+        }
+
+        // シーンの全ルート GameObject 配下（非アクティブ含む）から T を列挙する。
+        // ルートごとに遅延で取得するため、列挙中に後続ルートの状態が変わっても元のループと同じ順序で拾う
+        internal static IEnumerable<T> GetComponentsInScene<T>(this Scene scene)
+        {
             foreach (GameObject root in scene.GetRootGameObjects())
             {
-                foreach (LifetimeScope scope in root.GetComponentsInChildren<LifetimeScope>(true))
+                foreach (T component in root.GetComponentsInChildren<T>(true))
                 {
-                    if (scope.Container != null)
-                    {
-                        continue;
-                    }
-                    ResolveParentReference(scope);
-                    scope.Build();
+                    yield return component;
                 }
             }
         }
