@@ -107,5 +107,6 @@ dotnet format Common.csproj --no-restore --include <file>
 
 ## Asset Store アセット
 
-- Asset Store からダウンロードしたものは `Assets/AssetStore/` に配置する。このディレクトリは Git の管理対象外。
+- Asset Store からダウンロードしたものは `Assets/AssetStore/` に配置する。このディレクトリも Git の管理対象。
+- このテンプレートから作るゲームのリポジトリは Private にする（Asset Store のアセットは再配布が禁止されていることが多く、Public に push すると公開扱いになる）。Public であるこのテンプレート自体には Asset Store のアセットをコミットしない。
 - DOTween (Demigiant) は `Assets/Plugins/` に配置済み（Git 管理対象）。

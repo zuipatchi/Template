@@ -29,11 +29,12 @@ description: テンプレートから新規プロジェクトをセットアッ�
    ### CLAUDE.md
    - 「プロジェクト概要」セクションの説明を新しいゲームに合わせて書き換える
 
-3. Library フォルダを削除してもらう。VS Code には表示されないので注意。Unity / Unity Hub を一度閉じないと削除できない
+3. Library フォルダを削除してもらう。VS Code には表示されないので注意。Unity / Unity Hub とVS Codeを一度閉じないと削除できない
 
 4. オンライン機能（UGS マッチメイキング / NGO）はこのテンプレートには含まれていない。
    必要な場合: `Packages/manifest.json` に `com.unity.netcode.gameobjects` / `com.unity.services.multiplayer` / `com.unity.services.authentication` を追加し、`ProjectSettings/ProjectSettings.asset` の `cloudProjectId` と `organizationId` を Unity Editor → Edit → Project Settings → Services で紐づける必要があることを案内する。
 
 5. 完了後、ユーザーに以下を伝える:
    - 変更した内容の一覧
+   - 新しいゲームの Git リポジトリは **Private** で作ること（`Assets/AssetStore/` の Asset Store アセットも Git で管理するため、Public だとライセンス上再配布にあたる）
    - .gitを再生成してもらう

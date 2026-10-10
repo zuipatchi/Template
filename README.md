@@ -35,8 +35,10 @@ Windows / Mac / WebGL のいずれでもビルドできる。
 ## 日本語フォント
 - ゲーム全体の既定フォントは NotoSansJP Bold (SDF) をテーマで全 UI に適用済み。詳細・差し替え方法・WebGL 固有の制約は [docs/design-system.md](docs/design-system.md)「日本語フォント」を参照
 
-## gitignore
-- Asset Storeからダウンロードした物は AssetStore ディレクトリに入れるとGitに管理されない
+## Asset Store のアセットと Git
+- Asset Store からダウンロードしたものは `Assets/AssetStore/` に入れる。このディレクトリも Git で管理する
+- **このテンプレートから作るゲームのリポジトリは必ず Private にする。** Asset Store のアセットの多くはライセンスで再配布が禁止されており、Public リポジトリに push すると誰でもダウンロードできる状態で公開してしまう
+- このテンプレート自体のリポジトリは Public なので、テンプレートには Asset Store のアセットをコミットしない
 
 ## このテンプレートから新規プロジェクトを作る手順
 
