@@ -3,10 +3,14 @@ Unityで新しくゲームを作るときに利用するテンプレート
 ここには開発者向けのメモを記載する
 
 ## 開発の進め方
-1. `/feature` を実行して新機能を実装する（ヒアリング→実装→レビュー→改善→動作確認まで自動で進む）
-2. 自動テスト（EditMode / PlayMode）を実行する（手順は [CLAUDE.md](CLAUDE.md)「Unity 開発」を参照）
-3. Unity Editor で Play して動作確認する
-4. 問題なければ `/ship` を実行してコミット・ドキュメント更新まで行う
+1. `/feature` で作りたいものを伝え、提示された「何を作るか・完了条件」を承認する
+2. あとは Claude が実装 → 検証ループ（規約チェック・セルフレビュー・テストコード実行・Unity MCP での動作確認）→ ドキュメント更新 → コミットまで一度に進める
+3. 報告のチェックリストに沿って Unity Editor で確認する（Editor は開いたままになっている）
+4. 気になる点があれば「〇〇が変」と伝えるだけで、2 の流れをもう一度回す
+
+`/feature` を使わずに手で変更した場合は、`/ship` でレビュー・コミット・ドキュメント更新を行う。リポジトリ全体の定期点検には `/code-check`・`/duplicate-check`・`/split-check`・`/docs-review`・`/sync-docs` を使う。
+
+Unity MCP での動作確認には `com.unity.pipeline` パッケージ（[Packages/manifest.json](Packages/manifest.json)）と Unity CLI（`unity` コマンド）が必要。
 
 ## 使用 Package
 - Addressables
