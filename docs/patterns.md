@@ -188,27 +188,43 @@ private void StopBlink()
 ## 4. シーン表示前に非同期初期化を待つ（ISceneReady）
 
 Addressables ロードなど「フェードイン前に終わらせたい処理」がある場合、
-そのシーンの Presenter（や任意の MonoBehaviour）に `ISceneReady` を実装する。
+そのシーンの GameObject にアタッチした MonoBehaviour に `ISceneReady` を実装する。
 `SceneTransitioner` がフェードイン前に、次シーン内の **全** `ISceneReady` 実装の `ReadyAsync` を
 `UniTask.WhenAll` で待機する（実装が無いシーンは素通り）。
 
+> 検索はシーンの GameObject 階層に対して行う（`GetComponentsInScene<ISceneReady>()`）。**`RegisterEntryPoint` で登録しただけの純粋 C# クラスは検出されず、待たれない**。
+
 ```csharp
-public sealed class YourPresenter : IAsyncStartable, ISceneReady
+// LifetimeScope には RegisterComponentInHierarchy<YourPresenter>() で登録する
+public sealed class YourPresenter : MonoBehaviour, ISceneReady
 {
     private readonly UniTaskCompletionSource _ready = new();
 
-    public async UniTask StartAsync(CancellationToken ct)
+    // インジェクションはフェードイン前の BuildLifetimeScopes で行われるので、ここから初期化を始める
+    [Inject]
+    public void Construct(YourStore store)
+    {
+        InitializeAsync(store, this.GetCancellationTokenOnDestroy()).Forget();
+    }
+
+    private async UniTaskVoid InitializeAsync(YourStore store, CancellationToken ct)
     {
         try
         {
-            await LoadAssetsAsync(ct);   // 表示前に終わらせたい初期化
-            _ready.TrySetResult();        // 完了を通知 → フェードイン開始
+            await store.Loaded.AttachExternalCancellation(ct);   // 表示前に終わらせたい初期化
+            _ready.TrySetResult();                                // 完了を通知 → フェードイン開始
         }
-        catch (OperationCanceledException) { }
+        catch (OperationCanceledException)
+        {
+            // シーン破棄によるキャンセルは正常系なので何もしない
+        }
     }
 
     // SceneTransitioner がフェードイン前にこれを await する
-    public UniTask ReadyAsync(CancellationToken ct) => _ready.Task.AttachExternalCancellation(ct);
+    public UniTask ReadyAsync(CancellationToken ct)
+    {
+        return _ready.Task.AttachExternalCancellation(ct);
+    }
 }
 ```
 

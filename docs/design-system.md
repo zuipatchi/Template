@@ -99,7 +99,7 @@ USS クラス定義の実装例は以下を参照。
 - [Assets/Scripts/Common/Option/Option.uss](../Assets/Scripts/Common/Option/Option.uss) — オプションアイコンと暗幕（Common 常駐）
 - [Assets/AddressableAssets/Modal/Modal.uss](../Assets/AddressableAssets/Modal/Modal.uss) — オプションモーダルの中身
 
-USS はスタイルシート単位で読み込まれるため、同じクラス名を複数の USS に定義してよい（`.card` / `.btn-accent` などは各シーンの USS に複製されている）。値を変えるときは**全ファイルを揃えて更新すること**。
+USS はスタイルシート単位で読み込まれるため、同じクラス名を複数の USS に定義してよい（`.btn-accent` / `.btn-secondary` / `.divider` は Home.uss と Modal.uss に、`.overlay-bg` は Home.uss と Option.uss に複製されている）。値を変えるときは**全ファイルを揃えて更新すること**。
 
 ### カード（`.card`）
 
@@ -436,7 +436,7 @@ SortingOrder は「シーンの UI → オプション → フェード暗幕」
 | UIDocument | SortingOrder | 理由 |
 |---|---|---|
 | 各シーンの UI | `0` | 通常のゲーム画面 |
-| Common の `Option` | `1000` | オプションアイコンとモーダルをシーン UI より手前に出すため |
+| Common の `UI`（Option.uxml） | `1000` | オプションアイコンとモーダルをシーン UI より手前に出すため |
 | Common の `Transition` | `2000` | シーン遷移のフェード暗幕。オプションモーダルも覆い隠す最前面 |
 
 新しいシーンの UIDocument は `0` のままにする。シーン内で重ね順を作りたい場合は UIDocument を増やさず、同一ツリー内の要素順で解決する（`1000` 以上を使うとオプションアイコンより手前に出てしまう）。

@@ -99,14 +99,21 @@ OptionModalPresenter
 ## 非同期処理（UniTask）
 
 - `IAsyncStartable` を実装したクラスは VContainer が StartAsync を呼ぶ
-- 非同期ロードの完了待ちは `await _store.Loaded` の形で行う（`Store` 系の仕組みは後述「アセット管理（Addressables）」を参照）
+- 非同期ロードの完了待ちは `await _store.Loaded` の形で行う。シーン破棄で止まるよう `AttachExternalCancellation(ct)` でキャンセルを伝え、`OperationCanceledException` は正常系として catch する（`Store` 系の仕組みは後述「アセット管理（Addressables）」を参照）
 
 ```csharp
 // 例: AudioManager (Title シーン)
 public async UniTask StartAsync(CancellationToken cancellation = default)
 {
-    await _soundStore.Loaded;
-    _soundPlayer.PlayBGM(_soundStore.TitleBGM);
+    try
+    {
+        await _soundStore.Loaded.AttachExternalCancellation(cancellation);
+        _soundPlayer.PlayBGM(_soundStore.TitleBGM);
+    }
+    catch (OperationCanceledException)
+    {
+        // シーン破棄によるキャンセルは正常系なので何もしない
+    }
 }
 ```
 
@@ -121,6 +128,8 @@ public async UniTask StartAsync(CancellationToken cancellation = default)
 | `IAsyncStartable.StartAsync()` | 可（Build 完了後に VContainer が呼ぶ） |
 | ユーザー操作イベントコールバック | 可（injection 完了後に発火） |
 
+> この制約は `autoRun` が無効なシーン（Title / Home / Main）の話。Common シーンの `CommonLifetimeScope` は `autoRun` が有効で自身の `Awake` でビルドされるため、Common 内の MonoBehaviour（`OptionPresenter` / `SoundPlayer` など）は `Start()` でインジェクト済みフィールドを使える。
+
 「シーン起動時にインジェクト済みフィールドを使って初期化したい」場合は、`Start()` ではなく `[Inject] Construct(...)` メソッド内で行うか、`IAsyncStartable` を実装した純粋 C# サービスを `RegisterEntryPoint` で登録してそこから MonoBehaviour の public メソッドを呼ぶ。
 
 ### シーン遷移のキャンセル処理
@@ -134,7 +143,7 @@ public async UniTask StartAsync(CancellationToken cancellation = default)
 
 これにより、Addressables の非同期ロードなど「表示前に完了させたい初期化」がフェードイン前に終わり、背景や要素が空白のまま画面が現れるのを防ぐ。
 
-新しいシーンで表示前に待ちたい非同期処理がある場合は、そのシーンの Presenter に `ISceneReady` を実装し、準備完了時に `ReadyAsync` を完了させるだけでよい（実装が無いシーンは素通りする任意フック）。
+新しいシーンで表示前に待ちたい非同期処理がある場合は、そのシーンの GameObject にアタッチした MonoBehaviour（Presenter など）に `ISceneReady` を実装し、準備完了時に `ReadyAsync` を完了させるだけでよい（実装が無いシーンは素通りする任意フック）。DI に登録しただけの純粋 C# クラスは検索対象外なので注意（実装例は [patterns.md](patterns.md)「4. シーン表示前に非同期初期化を待つ（ISceneReady）」）。
 
 `ReadyAsync` がキャンセル以外の例外を投げても、暗幕が残り続けないよう `SceneTransitioner` 側で例外をログ出力して握りつぶし、フェードインは必ず実行する（`WaitReadySafelyAsync`）。実装側で初期化失敗を扱いたい場合は `ReadyAsync` 内で完結させること。
 
@@ -145,9 +154,9 @@ public async UniTask StartAsync(CancellationToken cancellation = default)
 - BGM: `AudioSource.loop = true`、`PlayBGM()` で差し替え
 - SE: `PlayOneShot()` で重ね再生
 - 音量は `OptionModel` が 0–1 で保持し、`BGMVolume` / `SEVolume`（`ReadOnlyReactiveProperty<float>`）で公開する
-- `SoundPlayer` は音量変化を Subscribe して AudioSource に即時反映
+- `SoundPlayer` は音量変化を Subscribe して AudioSource に即時反映（`BindVolume`）
 
-> `_bgmAudioSource.volume = v / 2` としているのは、
+> `BindVolume` で BGM / SE の AudioSource に `v * VolumeScale`（`VolumeScale = 0.5f`）を反映しているのは、
 > OptionModel の値 1.0 がデフォルトの AudioSource 最大音量の半分に相当するようにしているため。
 
 ---
@@ -157,10 +166,14 @@ public async UniTask StartAsync(CancellationToken cancellation = default)
 ### ファイル配置
 
 ```
-Assets/Scripts/<Scene>/<Feature>/
-  ├── *Presenter.cs   （UI ロジック）
-  └── *.uxml          （見た目 / Addressables 経由でロードするものは AddressableAssets/ に配置）
+Assets/Scripts/<Scene>/[<Feature>/]
+  ├── *Presenter.cs   （UI ロジック。Title/GameStartButton のように Presenter/ サブフォルダに置く場合もある）
+  └── View/
+        ├── *.uxml    （見た目 / Addressables 経由でロードするものは AddressableAssets/ に配置）
+        └── *.uss     （UXML と同じディレクトリに置く）
 ```
+
+Common の `Option/` は Presenter と `Option.uxml` / `Option.uss` を同じフォルダに置いている。
 
 ### PanelSettings
 
@@ -208,5 +221,5 @@ Assets/AddressableAssets/
 ```
 
 - `SoundStore` / `ModalStore` はともに `AssetStoreBase` を継承し、ボイラープレート（`UniTask Loaded`・`Start()`・try-catch）を共有
-- `AssetStoreBase` は `IStartable` を実装し、`LoadAssetsCore()` をサブクラスに委譲する
+- `AssetStoreBase` は `IStartable` を実装し、`LoadAssetsCore()` をサブクラスに委譲する。サブクラスは `LoadAssetsCore()` とエラーログ用の `AssetCategory` を実装し、各アセットは `LoadAsync<T>(address)`（`Addressables.LoadAssetAsync<T>(...).ToUniTask()` のラッパー）でロードする
 - 起動時に Addressables ロードを行い、完了を `UniTask Loaded` プロパティで通知する。使う側は `await _store.Loaded` で待機してから使用する
