@@ -3,7 +3,8 @@ Unityで新しくゲームを作るときに利用するテンプレート
 ここには開発者向けのメモを記載する
 
 ## 開発の進め方
-1. `/feature` で作りたいものを伝え、提示された「何を作るか・完了条件」を承認する
+0. 作りたいもののアイデアは [docs/game-backlog.md](docs/game-backlog.md) に箇条書きで溜めておく
+1. `/feature` で作りたいものを伝え（「バックログの次のをやって」でもよい）、提示された「何を作るか・完了条件」を承認する
 2. あとは Claude が実装 → 検証ループ（規約チェック・セルフレビュー・テストコード実行・Unity MCP での動作確認）→ ドキュメント更新 → コミットまで一度に進める
 3. 報告のチェックリストに沿って Unity Editor で確認する（Editor は開いたままになっている）
 4. 気になる点があれば「〇〇が変」と伝えるだけで、2 の流れをもう一度回す
@@ -15,7 +16,7 @@ Unityで新しくゲームを作るときに利用するテンプレート
 - `/code-check`: コード全体のバグ・規約・設計・パフォーマンス・重複・ファイル分割
 - `/docs-check`: ドキュメント内部の品質と、コードとの食い違い
 
-チェック系スキルの共通方針（途中で確認を求めない・直す／見送るの基準）は [.claude/shared/check-policy.md](.claude/shared/check-policy.md) にまとめてある。
+チェック系スキルの共通方針（途中で確認を求めない・直す／見送るの基準）は [.claude/shared/check-policy.md](.claude/shared/check-policy.md) にまとめてある。見送った項目と Unity での確認待ちは [docs/tech-backlog.md](docs/tech-backlog.md) に溜まるので、時間があるときに目を通して「決定: 〜」と書き足せば、次の作業で対応される。
 
 Unity MCP での動作確認には `com.unity.pipeline` パッケージ（[Packages/manifest.json](Packages/manifest.json)）と Unity CLI（`unity` コマンド）が必要。
 

@@ -101,7 +101,9 @@ dotnet format Common.csproj --no-restore --include <file>
 - [docs/design-system.md](docs/design-system.md): UIデザインシステム（カラー・タイポグラフィ・コンポーネント）
 - [docs/patterns.md](docs/patterns.md): よく触る実装パターン集（Presenter追加・DI登録・destroyCancellationToken・DOTween×UI Toolkit・ISceneReady・シーン追加手順）
 - [docs/effects.md](docs/effects.md): パーティクル・VFX 実装ノウハウ（UI Toolkit との共存・加算ブレンド・worldBound 変換・再生時間調整）
-- [docs/product.md](docs/product.md): プロダクトドキュメント
+- [docs/product.md](docs/product.md): プロダクトドキュメント（実装済み機能の一覧）
+- [docs/game-backlog.md](docs/game-backlog.md): 作りたいゲームの仕様・アイデア（ユーザーが書く。`/feature` がここから項目を拾う）
+- [docs/tech-backlog.md](docs/tech-backlog.md): 技術バックログ（チェック系スキルが見送った項目・Unity での確認待ち。作業の最初に読み、見送った項目を追記する）
 
 ## Asset Store アセット
 
