@@ -234,7 +234,7 @@ public sealed class YourPresenter : MonoBehaviour, ISceneReady
 
 ## 5. 新しいシーンを追加する
 
-シーンを1つ増やすときに触る箇所は決まっている。抜けやすいのは **Build Settings と `Scenes` enum の対応** と **`.meta` の追従**。
+シーンを1つ増やすときに触る箇所は決まっている。抜けやすいのは **Build Profiles のシーンリストと `Scenes` enum の対応** と **`.meta` の追従**。
 
 **① シーンを作る**
 
@@ -250,9 +250,9 @@ public sealed class YourPresenter : MonoBehaviour, ISceneReady
 
 `Common Scene Loader` を置いておくと、そのシーンから直接 Play しても Common シーンがロードされる。
 
-**② Build Settings に登録し、`Scenes` enum と番号を揃える**
+**② Build Profiles のシーンリストに登録し、`Scenes` enum と番号を揃える**
 
-File → Build Settings にシーンを追加し、**遷移順に並べ替える**。そのうえで [Scenes.cs](../Assets/Scripts/Common/SceneManagement/Scenes.cs) の `Scenes` enum を Build Settings の buildIndex と一致させる。
+File → Build Profiles のシーンリストにシーンを追加し、**遷移順に並べ替える**。そのうえで [Scenes.cs](../Assets/Scripts/Common/SceneManagement/Scenes.cs) の `Scenes` enum をシーンリストの buildIndex と一致させる。
 
 ```csharp
 public enum Scenes

@@ -12,7 +12,7 @@ Unity で新しくゲームを作るときに利用する Unity 6 (6000.3.18f1) 
 
 - **テスト実行 (EditMode)**: Unity Editor → Window → General → Test Runner → EditMode タブ → Run All
 - **テスト実行 (PlayMode)**: Unity Editor → Window → General → Test Runner → PlayMode タブ → Run All
-- **ビルド**: Unity Editor → File → Build Settings → Build
+- **ビルド**: Unity Editor → File → Build Profiles → Build
 
 ## テスト構成
 
@@ -27,7 +27,8 @@ Unity で新しくゲームを作るときに利用する Unity 6 (6000.3.18f1) 
 - ボタンクリック模擬は `NavigationSubmitEvent`（`ClickEvent` では Clickable が反応しない）
 
 **EditMode テストの注意点:**
-- asmdef の `references` に、テスト対象クラスのアセンブリ GUID とその直接依存アセンブリ GUID を追加する（推移的参照は自動解決されない）
+- asmdef の `includePlatforms` は `["Editor"]` にする（空にすると PlayMode テスト扱いになり、EditMode タブや `unity test --mode EditMode` で実行されない）
+- asmdef の `references` には、テストコードが直接使う型のアセンブリ GUID を追加する（テスト対象クラスが内部で依存するだけのアセンブリは不要）
 - `R3.dll` を `precompiledReferences` に追加が必要
 - `ReadOnlyReactiveProperty<T>` の値は `.CurrentValue`（`.Value` は不可）。`ReactiveProperty<T>` は `.Value` で読み書き可
 - R3 の Subscribe 拡張メソッドには `using R3;` が必要
@@ -81,7 +82,7 @@ dotnet format Common.csproj --no-restore --include <file>
 |---|---|
 | Common DI 登録 | [Assets/Scripts/Common/Injector/CommonLifeTimeScope.cs](Assets/Scripts/Common/Injector/CommonLifeTimeScope.cs) |
 | シーン遷移ロジック | [Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs](Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs) |
-| シーン定義（Build Settings の buildIndex と一致させる enum） | [Assets/Scripts/Common/SceneManagement/Scenes.cs](Assets/Scripts/Common/SceneManagement/Scenes.cs) |
+| シーン定義（Build Profiles のシーンリストの buildIndex と一致させる enum） | [Assets/Scripts/Common/SceneManagement/Scenes.cs](Assets/Scripts/Common/SceneManagement/Scenes.cs) |
 | シーン準備完了通知（任意実装。非同期初期化の完了を待ってからフェードイン。シーン上の MonoBehaviour に実装する。DI 登録だけの純粋 C# クラスは検出されない） | [Assets/Scripts/Common/SceneManagement/ISceneReady.cs](Assets/Scripts/Common/SceneManagement/ISceneReady.cs) |
 | 遷移演出（暗幕が出ている間はクリックを遮断） | [Assets/Scripts/Common/Transition/TransitionPresenter.cs](Assets/Scripts/Common/Transition/TransitionPresenter.cs) |
 | 遷移の暗幕の見た目 | [Assets/Scripts/Common/Transition/Transition.uss](Assets/Scripts/Common/Transition/Transition.uss) |

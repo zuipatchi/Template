@@ -85,7 +85,7 @@ unity test . --mode PlayMode --output Logs/claude/playmode.xml --timeout 900
 
 - 終了コード `0` = 全件成功、`8` = テストが失敗（結果 XML の失敗ケースを読んで直す）、`6` = 実行できなかった（コンパイルエラー・ライセンス・タイムアウトなど。ログを読んで原因を直す）
 - 数分かかることがあるので Bash の `run_in_background` で実行し、完了通知を待つ
-- **Editor が開いているときはバッチモードが使えない**（プロジェクトがロックされる）。`unity command --query test` で Editor 側にテスト実行コマンドがあればそれを使い、無ければ「未実行」として Phase 6 で報告する。ユーザーの Editor を勝手に閉じない
+- **Editor が開いているときはバッチモードが使えない**（プロジェクトがロックされる）。代わりに Unity MCP の `run_tests` で実行する（`mode: "editor"` と `mode: "playmode"`。PlayMode は非同期で始まるので `test_status` で完了を待つ）。ユーザーの Editor を勝手に閉じない
 
 ### 3-4. Unity MCP での動作確認
 
@@ -96,7 +96,8 @@ unity test . --mode PlayMode --output Logs/claude/playmode.xml --timeout 900
 2. `unity command` で、この Editor が公開しているコマンドを確認する（コマンド名を推測しない）
 3. Play モードに入り（`unity command editor_play`）、完了条件のシナリオを操作する
    - ボタン操作・状態の確認は `unity command eval '<C#>'` などで行う
-   - 画面は `unity command screenshot --output Logs/claude/<名前>.png` で撮影し、Read ツールで画像を見て判定する
+   - 画面は MCP の `capture_game_view`（`source: "screen"`）で撮影し、返ってきた画像を見て判定する。**`save_path` は指定しない**（`Assets/` 配下に保存され、アセットとして取り込まれてしまう）
+   - Unity MCP のツール（`editor_play` / `eval` / `get_console_logs` など）が使えるときはそれを優先し、使えないときは `unity command` を使う
    - コンソールに例外・エラーが出ていないか確認する
 4. 確認が終わったら Play モードを抜ける。**Editor は閉じずに残す**（Phase 6 の後にユーザーがそのまま確認できるように）
 

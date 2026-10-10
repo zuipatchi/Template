@@ -78,17 +78,7 @@
 
 Unity Editor での確認が済んでいないもの。確認できたら削除する。
 
-### U-01 遷移の暗幕を UXML / USS 化した変更
-- 内容: Common シーンの Transition の UIDocument に `Transition.uxml` を YAML の手編集で割り当てた（コミット b40114b）
-- 確認すること: Source Asset に `Transition.uxml` が入っているか／Title → Home の遷移で黒くフェードするか／暗くなっている途中でオプションアイコンが反応しないか／Home 画面とクレジット画面の見た目が変わっていないか
-
-### U-02 Build Settings のメニュー名
-- 場所: [CLAUDE.md](../CLAUDE.md)「Unity 開発」、[patterns.md](patterns.md)、[architecture.md](architecture.md)
-- 内容: Unity 6 ではメニューが「File → Build Profiles」になっているはずだが、Editor で確かめていない。確認できたら docs の「Build Settings」を直す
-
-### U-03 EditMode テストの asmdef の参照
-- 場所: [CLAUDE.md](../CLAUDE.md)「EditMode テストの注意点」、`Assets/Tests/EditMode/Tests.EditMode.asmdef`
-- 内容: CLAUDE.md は「テスト対象の直接依存アセンブリも references に入れる」と書いているが、実際の asmdef には OptionModel が依存する VContainer が入っていない。テストが通るなら CLAUDE.md の書き方を「テストコードが直接使うアセンブリ」に寄せる
+（なし）
 
 ---
 
@@ -114,6 +104,10 @@ Unity Editor での確認が済んでいないもの。確認できたら削除�
 ### I-05 ドキュメントの表記ゆれ
 - `LifeTime Scope`（GameObject 名）と `LifetimeScope` の混在、`StartAsync` の引数名（`cancellation` / `ct`）、半角英字前後のスペース、`scale` の値の書き方（1 値 / 2 値）。統一の基準がドキュメントに無い
 - [patterns.md](patterns.md) 1 節で、前の例は `IAsyncStartable` なのに後の例は `void IStartable.Start()` を使っている
+
+### I-06 遷移中に AudioListener が 2 つになる
+- Title と Home の両方のカメラに AudioListener があり、遷移中に両シーンが同時に読み込まれている間だけ「There are 2 audio listeners in the scene」のログが出る（エラーではない。遷移完了で解消）。直すなら AudioListener を Common シーンに 1 つだけ置き、各シーンのカメラから外す
+- 出典: Unity MCP での動作確認（2026-10-10）
 
 ---
 
