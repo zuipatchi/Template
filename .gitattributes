@@ -19,16 +19,17 @@
 # シェルスクリプト（bash で実行するため CRLF にしない）
 *.sh        text eol=lf
 
-# Unity YAML（テキスト扱いだが手編集しないため diff は抑制）
-*.meta       text
-*.unity      text
-*.prefab     text
-*.asset      text
-*.mat        text
-*.anim       text
-*.controller text
-*.physicMaterial text
-*.playerprefs    text
+# Unity YAML（Unity は常に LF で書き出すため、チェックアウトも LF に固定する。
+# autocrlf=true の環境で CRLF になると、Unity が保存し直すたびに改行コードだけの差分が出続ける）
+*.meta       text eol=lf
+*.unity      text eol=lf
+*.prefab     text eol=lf
+*.asset      text eol=lf
+*.mat        text eol=lf
+*.anim       text eol=lf
+*.controller text eol=lf
+*.physicMaterial text eol=lf
+*.playerprefs    text eol=lf
 
 # バイナリ（正規化しない）
 *.png   binary

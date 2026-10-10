@@ -17,7 +17,7 @@ description: テンプレートから新規プロジェクトをセットアッ�
    （`metroPackageName` / `metroApplicationDescription` も同様に変更する）
 
    ### Template.slnx
-   ファイル名を `<新プロジェクト名>.slnx` にリネーム（`git mv Template.slnx <新プロジェクト名>.slnx`）
+   作業不要。`*.slnx` は Git 管理外で、Unity がプロジェクトのフォルダ名（`<新プロジェクト名>.slnx`）で自動生成する。フォルダに `Template.slnx` が残っていれば削除してよい
 
    ### .vscode/settings.json
    `dotnet.defaultSolution` を `<新プロジェクト名>.slnx` に変更
