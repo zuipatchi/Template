@@ -54,7 +54,10 @@ namespace Title.GameStartButton
         private void OnDisable()
         {
             StopBlink();
-            if (_gameStartButton != null) _gameStartButton.clicked -= OnClickGameStart;
+            if (_gameStartButton != null)
+            {
+                _gameStartButton.clicked -= OnClickGameStart;
+            }
             _gameStartButton = null;
         }
 

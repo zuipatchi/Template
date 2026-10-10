@@ -43,7 +43,7 @@ namespace Home
             {
                 CreditEntry entry = entries[i];
 
-                VisualElement row = new VisualElement();
+                VisualElement row = new();
                 row.AddToClassList("credit-row");
                 // USS に :last-child が無いため、末尾の区切り線はクラスで打ち消す
                 if (i == entries.Count - 1)
@@ -51,11 +51,11 @@ namespace Home
                     row.AddToClassList("credit-row--last");
                 }
 
-                Label role = new Label(entry.Role);
+                Label role = new(entry.Role);
                 role.AddToClassList("credit-row__role");
                 row.Add(role);
 
-                Label name = new Label(entry.Name);
+                Label name = new(entry.Name);
                 name.AddToClassList("credit-row__name");
                 row.Add(name);
 

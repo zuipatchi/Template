@@ -38,19 +38,29 @@ namespace Common.SceneManagement
         public async UniTask Transit(Scenes next)
         {
             // コモンシーンはアクティブにしない
-            if (next == Scenes.Common) return;
+            if (next == Scenes.Common)
+            {
+                return;
+            }
 
             // 実行中の Transit はキャンセル
             _runningCts?.Cancel();
             _runningCts?.Dispose();
             _runningCts = new CancellationTokenSource();
 
+            // ゲート待ちの間に後続の Transit が _runningCts を差し替える（自分の CTS を Cancel・Dispose する）ため、
+            // 自分のトークンは待つ前に確保しておく。ゲート取得後に _runningCts を読むと後続のトークンを掴んでしまう
+            CancellationToken runningToken = _runningCts.Token;
+
             await _gate.WaitAsync();
             try
             {
+                // ゲート待ちの間に後続の Transit が来ていたら、この遷移は実行しない
+                runningToken.ThrowIfCancellationRequested();
+
                 // Destroyされるまたは、キャンセルされたら止まるトークンを作成する
                 using CancellationTokenSource linked = CancellationTokenSource.CreateLinkedTokenSource(
-                    _runningCts.Token,
+                    runningToken,
                     this.GetCancellationTokenOnDestroy()
                 );
                 CancellationToken ct = linked.Token;
@@ -58,7 +68,10 @@ namespace Common.SceneManagement
                 Scene activeScene = SceneManager.GetActiveScene();
 
                 // 同じシーンに遷移できなくする
-                if (activeScene.buildIndex == (int)next) return;
+                if (activeScene.buildIndex == (int)next)
+                {
+                    return;
+                }
 
                 await _transitionPresenter.CoverAsync();
 

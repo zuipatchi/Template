@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -13,7 +14,10 @@ namespace Common.SceneManagement
         private async void Awake()
         {
             // 2重起動させない
-            if (_loaded) return;
+            if (_loaded)
+            {
+                return;
+            }
             _loaded = true;
 
             Scene commonScene = SceneManager.GetSceneByBuildIndex(0);
@@ -22,9 +26,17 @@ namespace Common.SceneManagement
             if (!commonScene.IsValid())
             {
                 CancellationToken token = this.GetCancellationTokenOnDestroy();
-                await SceneManager.LoadSceneAsync(0, LoadSceneMode.Additive).WithCancellation(token);
-                // Common シーンの LifetimeScope.Awake() が完了するまで1フレーム待つ
-                await UniTask.NextFrame(token);
+                try
+                {
+                    await SceneManager.LoadSceneAsync(0, LoadSceneMode.Additive).WithCancellation(token);
+                    // Common シーンの LifetimeScope.Awake() が完了するまで1フレーム待つ
+                    await UniTask.NextFrame(token);
+                }
+                catch (OperationCanceledException)
+                {
+                    // ロード中の Destroy によるキャンセルは正常系なので何もしない
+                    return;
+                }
             }
 
             SceneManager.GetActiveScene().BuildLifetimeScopes();

@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,8 +16,16 @@ namespace Common.SceneManagement
                 return;
             }
 
-            await SceneManager.LoadSceneAsync((int)Scenes.Title, LoadSceneMode.Additive)
-                .WithCancellation(this.GetCancellationTokenOnDestroy());
+            try
+            {
+                await SceneManager.LoadSceneAsync((int)Scenes.Title, LoadSceneMode.Additive)
+                    .WithCancellation(this.GetCancellationTokenOnDestroy());
+            }
+            catch (OperationCanceledException)
+            {
+                // ロード中の Destroy によるキャンセルは正常系なので何もしない
+                return;
+            }
 
             Scene titleScene = SceneManager.GetSceneByBuildIndex((int)Scenes.Title);
             titleScene.BuildLifetimeScopes();

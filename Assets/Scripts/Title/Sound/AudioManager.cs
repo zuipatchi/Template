@@ -11,8 +11,8 @@ namespace Title.Sound
 
     public class AudioManager : IAsyncStartable
     {
-        private SoundPlayer _soundPlayer;
-        private SoundStore _soundStore;
+        private readonly SoundPlayer _soundPlayer;
+        private readonly SoundStore _soundStore;
 
         [Inject]
         public AudioManager(SoundPlayer soundPlayer, SoundStore soundStore)
@@ -28,7 +28,10 @@ namespace Title.Sound
                 await _soundStore.Loaded.AttachExternalCancellation(cancellation);
                 _soundPlayer.PlayBGM(_soundStore.TitleBGM);
             }
-            catch (OperationCanceledException) { }
+            catch (OperationCanceledException)
+            {
+                // シーン破棄によるキャンセルは正常系なので何もしない
+            }
         }
     }
 }
