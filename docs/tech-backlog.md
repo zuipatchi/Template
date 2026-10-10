@@ -12,75 +12,7 @@
 
 方針が決まれば直せるもの。
 
-### B-01 Title で「タイトルに戻る」を押しても何も起きない
-- 場所: [OptionExitRouter.cs](../Assets/Scripts/Common/Option/OptionExitRouter.cs)、[SceneTransitioner.cs](../Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs)（同じシーンへの遷移は何もしない）
-- 内容: Title でオプションを開くと「タイトルに戻る」が表示されるが、押しても SE が鳴ってモーダルが閉じるだけ
-- 選択肢: Title ではボタンを非表示／無効にする、または仕様として docs に明記する
-- 推奨: **Title ではボタンを非表示にする**。押しても何も起きないボタンは不具合に見えるため。OptionExitRouter に「今のシーンで退出ボタンを出すか」を返すプロパティを足し、OptionPresenter がモーダルを開くときに表示を切り替える（変更は Common 内で完結する）
-- 出典: code-check（2026-10-10）
-
-### B-02 アセットのロード失敗時にオプションのオーバーレイが残る
-- 場所: [OptionPresenter.cs](../Assets/Scripts/Common/Option/OptionPresenter.cs) `SetupAsync`
-- 内容: ModalStore / SoundStore のロードに失敗すると半透明オーバーレイが全画面を覆ったまま残る。単に隠すだけだと、後でアイコンを押したときに閉じるボタンの無いオーバーレイが開く
-- 選択肢: 失敗時はアイコンを無効化する、エラー表示を出す、など失敗時の振る舞いを決める
-- 推奨: **失敗時はオーバーレイを隠し、オプションアイコンも非表示にしてエラーログを出す**。ロード失敗はほぼ開発中の Addressables の設定ミスで、プレイヤー向けのエラー画面まで作る価値は低い。`SetupAsync` を try/catch で囲むだけで済む
-- 出典: code-check（2026-10-10）
-
-### B-03 効果音再生の窓口クラスを作るか
-- 場所: [OptionPresenter.cs](../Assets/Scripts/Common/Option/OptionPresenter.cs)（依存 5 つ）、[HomePresenter.cs](../Assets/Scripts/Home/HomePresenter.cs)（依存 4 つ）、[GameStartButtonPresenter.cs](../Assets/Scripts/Title/GameStartButton/Presenter/GameStartButtonPresenter.cs)
-- 内容: 各 Presenter が `SoundStore` と `SoundPlayer` を両方受け取り、「開く＝Enter2、閉じる＝Cancel1、決定＝Enter1」の対応を個別に書いている
-- 直すなら: Common に `PlayEnter1()` / `PlayEnter2()` / `PlayCancel()` を持つ窓口クラスを新設し、CommonLifetimeScope に登録する（公開 API の新設なので設計判断）
-- 推奨: **作る**。ゲームを作り始めると効果音を鳴らす箇所は確実に増え、そのたびに Presenter が依存を 2 つ受け取って対応表を書き写すことになるため。名前は「開く・閉じる・決定」の意味で呼べる `UiSoundPlayer`（`PlayOpen()` / `PlayClose()` / `PlayDecide()`）がよい。既存の 3 つの Presenter もこれに置き換える
-- 出典: duplicate-check・split-check（2026-10-10）
-
-### B-04 BGM の再生が Title にしかない
-- 場所: [AudioManager.cs](../Assets/Scripts/Title/Sound/AudioManager.cs)、[SoundStore.cs](../Assets/Scripts/Common/Store/SoundStore.cs)
-- 内容: Home / Main でも Title の BGM が流れ続ける。`SoundStore.MainBGM` と `ResultSE` は読み込んでいるがどこからも使われていない
-- 選択肢: Main に BGM を切り替える EntryPoint を置く、使わないなら Store から外す、テンプレートの使用例として残す
-- 推奨: **Main に BGM を切り替える EntryPoint を置き、`MainBGM` を流す。`ResultSE` は Store から外す**。シーンごとに BGM を切り替える形はほぼどのゲームでも使うので、テンプレートに手本があると便利。一方、リザルト画面はテンプレートに無いので `ResultSE` は使い道がない
-- 出典: code-check（2026-10-10）
-
-### B-05 初回ロードでは ISceneReady が待たれない
-- 場所: [BootLoader.cs](../Assets/Scripts/Common/SceneManagement/BootLoader.cs)、[CommonSceneLoader.cs](../Assets/Scripts/Common/SceneManagement/CommonSceneLoader.cs)
-- 内容: ISceneReady を待つのは `SceneTransitioner.Transit` だけ。起動直後や Editor でシーンを直接 Play したときは暗幕も出さず、初期化前の画面が見える
-- 選択肢: 初回ロードでも暗幕を出して待つ（待機処理を SceneExtensions に共通化）、または「初回ロードは対象外」と docs に明記する
-- 推奨: **今は「初回ロードは対象外」と docs に明記するだけにする**。テンプレートの Title には ISceneReady の実装が無く、今は困る場面がない。Title で重い初期化が必要になったときに、待機処理を共通化して初回ロードにも入れる
-- 出典: code-check（2026-10-10）
-
-### B-06 UI 要素の取得タイミングが patterns.md の推奨と違う
-- 場所: [OptionPresenter.cs](../Assets/Scripts/Common/Option/OptionPresenter.cs)・[TransitionPresenter.cs](../Assets/Scripts/Common/Transition/TransitionPresenter.cs)（Awake で取得）、[GameStartButtonPresenter.cs](../Assets/Scripts/Title/GameStartButton/Presenter/GameStartButtonPresenter.cs)（OnEnable で取得）
-- 内容: [patterns.md](patterns.md) は「UI 要素の取得は `IStartable.Start()` で」と定めているが、既存コードは Awake / OnEnable で取得している（現状は動いている）。patterns.md の「全コンポーネントの Awake → 全コンポーネントの OnEnable」という順序説明も、Unity の実際の挙動と違う可能性がある（未検証）
-- 選択肢: コードを推奨の形に寄せる、または「同じ GameObject の UIDocument を使う場合は例外」と docs に書く
-- 推奨: **docs に例外として書く**。Common の Presenter は LifetimeScope の autoRun で注入が先に済み、Title のボタンも今日のテストと MCP の確認で正しく動いている。動いているコードを規約のためだけに書き換えるより、例外の条件を docs に書くほうが安全。ただし「全コンポーネントの Awake → 全コンポーネントの OnEnable」という説明は、実際にはオブジェクトごとに Awake と OnEnable が続けて呼ばれるので、正しい説明に直す
-- 出典: code-check・sync-docs（2026-10-10）
-
-### B-07 使われていないコンポーネントの説明が design-system.md に残っている
-- 場所: [design-system.md](design-system.md) の `.action-button` と `AddButtonHoverEffect`
-- 内容: どの USS / C# にも定義・使用がない。削除済み機能の名残かどうかは不明
-- 選択肢: 削除する、または「テンプレート未使用の参考例」と明記する
-- 推奨: **削除する**。使われていない参考例は、実装されていると誤解されるもとになる（今日の docs-check でもネットワーク機能の名残として指摘された）。必要になったときに書けばよい
-- 出典: docs-review・sync-docs（2026-10-10）
-
-### B-08 uGUI 禁止と effects.md の uGUI 使用
-- 場所: [CLAUDE.md](../CLAUDE.md)「アーキテクチャ」、[effects.md](effects.md)
-- 内容: CLAUDE.md は「uGUI 禁止」だが、effects.md は VFX の合成に uGUI の Canvas / RawImage を使っている
-- 選択肢: CLAUDE.md に「VFX を UI Toolkit より手前に合成する場合のみ例外（effects.md 参照）」と書き足す
-- 推奨: **選択肢のとおり CLAUDE.md に例外を書き足す**。UI Toolkit の上にパーティクルを出すには uGUI の Canvas を使うしかないことが effects.md で検証済みのため
-- 出典: docs-review（2026-10-10）
-
-### B-09 effects.md の Canvas の sortingOrder が重ね順と合わない
-- 場所: [effects.md](effects.md)、[design-system.md](design-system.md)「UIDocument の設定」
-- 内容: effects.md は Canvas の `sortingOrder = 100` で「UI Toolkit より上」としているが、このテンプレートでは Option が 1000、Transition が 2000 なので、100 はそれらより下になる
-- 選択肢: エフェクトをどの層に置くべきか決めて、effects.md の値と説明を直す
-- 推奨: **値は 100 のまま、説明を「シーンの UI（0）より手前、オプション（1000）と遷移の暗幕（2000）より奥」に直す**。エフェクトがオプションのモーダルや遷移の暗幕より手前に出ると見た目がおかしくなるため、この層がちょうどよい。ただし uGUI の Canvas と UIDocument の sortingOrder が同じ基準で並ぶかは未検証なので、エフェクトを実装するときに MCP で重なりを確認する
-- 出典: docs-review（2026-10-10）
-
-### B-10 カラーパレットに無い文字色
-- 場所: [design-system.md](design-system.md)「カラーパレット」
-- 内容: `.btn-secondary` の文字色 `rgb(230, 230, 245)` がパレットに無い
-- 選択肢: パレットに「テキスト（セカンダリボタン）」の行を足す
-- 推奨: **選択肢のとおりパレットに行を足す**。実際に使っている色がパレットに無いと、新しい画面を作るときに色を推測で決めることになるため
-- 出典: docs-review（2026-10-10）
+（なし）
 
 ---
 
@@ -88,7 +20,11 @@
 
 Unity Editor での確認が済んでいないもの。確認できたら削除する。
 
-（なし）
+### U-04 エフェクトの Canvas と UIDocument の重なり順
+- 場所: [effects.md](effects.md)（Canvas の `sortingOrder = 100`）、[design-system.md](design-system.md)「UIDocument の設定」
+- 内容: uGUI の Canvas と UIDocument の SortingOrder が同じ基準で並ぶか（エフェクトがシーンの UI より手前・オプションと遷移の暗幕より奥に出るか）が未検証
+- 推奨: **エフェクトを実装するときに Unity MCP で重なりを確認し、違っていれば effects.md の値と説明を直す**。今はエフェクトの実装が無く確かめられないため
+- 出典: B-09 の対応（2026-10-10）
 
 ---
 
@@ -109,7 +45,7 @@ Unity Editor での確認が済んでいないもの。確認できたら削除�
 - 推奨: **直す**。モバイルでは OS にプロセスを終了されることが普通にあり、設定が戻ると不具合として報告されやすい。モーダルを閉じるときに 1 回だけ `Save()` を呼べばよく、ドラッグ中の連続書き込み（I-04）の対策にもなる
 
 ### I-04 サウンド関連のパフォーマンス（計測なしでは効果が判断できない）
-- [SoundStore.cs](../Assets/Scripts/Common/Store/SoundStore.cs) の 6 つのロードが直列（`UniTask.WhenAll` で並列化できる）
+- [SoundStore.cs](../Assets/Scripts/Common/Store/SoundStore.cs) の 5 つのロードが直列（`UniTask.WhenAll` で並列化できる）
 - Addressables のハンドルを保持しておらず `Release` できない（`AssetStoreBase.LoadAsync` でハンドルを保持し、`IDisposable` で解放する案）
 - 全 BGM を常駐させている（BGM の Load Type を Streaming にする案）
 - 音量スライダーのドラッグ中に `PlayerPrefs.SetFloat` を連続で呼んでいる
@@ -123,6 +59,11 @@ Unity Editor での確認が済んでいないもの。確認できたら削除�
 ### I-06 遷移中に AudioListener が 2 つになる
 - Title と Home の両方のカメラに AudioListener があり、遷移中に両シーンが同時に読み込まれている間だけ「There are 2 audio listeners in the scene」のログが出る（エラーではない。遷移完了で解消）。直すなら AudioListener を Common シーンに 1 つだけ置き、各シーンのカメラから外す
 - 推奨: **直す**。今は害の無いログだけだが、遷移中に BGM の聞こえ方が一瞬変わる原因にもなりうる。AudioListener を Common シーンの SoundPlayer と同じ GameObject に 1 つ置き、各シーンのカメラからは外す（シーンの変更は Unity MCP で行う）
+- 出典: Unity MCP での動作確認（2026-10-10）
+
+### I-07 Play するとフォントアセットに差分が出る
+- [NotoSansJP-Bold SDF.asset](../Assets/Font/NotoSansJP-Bold%20SDF.asset) は Atlas Population Mode が Dynamic のため、Play 中に文字のアトラス（1024×1024）が作られてアセットに書き込まれ、Git に差分が出る（中身は実行時のキャッシュでコミット不要）
+- 推奨: **フォントアセットの「Clear Dynamic Data On Build」と、Play 終了時に動的データを消す設定を確認し、差分が出ないようにする**。設定で防げない場合は、Claude がコミット前にこのファイルの差分を `git restore` で捨てる運用にする
 - 出典: Unity MCP での動作確認（2026-10-10）
 
 ---

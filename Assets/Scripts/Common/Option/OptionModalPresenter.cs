@@ -47,14 +47,15 @@ namespace Common.Option
             slider.RegisterValueChangedCallback(evt => setVolume(evt.newValue));
         }
 
-        // モーダルは Common で一度だけ生成して使い回すため、開くたびに現在シーンに応じたラベルへ差し替える。
-        public void SetExitLabel(string label)
+        // モーダルは Common で一度だけ生成して使い回すため、開くたびに現在シーンに応じたラベル・表示へ差し替える。
+        public void SetExit(string label, bool visible)
         {
             if (_exitButton == null)
             {
                 return;
             }
             _exitButton.text = label;
+            _exitButton.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
     }
 }

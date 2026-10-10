@@ -16,7 +16,7 @@
 ```
 Common (常駐)
   ├── BootLoader              ビルド起動時に Title をロードする
-  ├── SoundPlayer
+  ├── SoundPlayer / UiSoundPlayer（UI 操作の効果音を「開く・閉じる・決定」で鳴らす窓口）
   ├── SceneTransitioner
   ├── TransitionPresenter
   ├── OptionPresenter / OptionModel（OptionModalPresenter は OptionPresenter が生成する plain C#）
@@ -39,7 +39,7 @@ Title (アディティブ) → Home (アディティブ) → Main (アディテ�
 | Title | Home | 「PRESS START」クリック（遷移先は `GameStartButtonPresenter._nextScene` で Inspector 指定） |
 | Home | Main | 「ゲーム開始」クリック |
 | Main | Home | オプションモーダルの「ゲームをやめる」 |
-| Main 以外の任意のシーン | Title | オプションモーダルの「タイトルに戻る」 |
+| Home | Title | オプションモーダルの「タイトルに戻る」（Title では退出ボタン自体を表示しない） |
 
 Home の「クレジット」はシーン遷移ではなく、同一シーン内のオーバーレイ表示。
 
@@ -60,12 +60,13 @@ CommonLifetimeScope   全シーン共通のシングルトンを登録
   ├── OptionModel
   ├── SoundPlayer
   ├── SoundStore
+  ├── UiSoundPlayer
   ├── TransitionPresenter
   └── SceneTransitioner
 
-TitleLifetimeScope    GameStartButtonPresenter / AudioManager
-HomeLifetimeScope     CreditModel / HomePresenter
-MainLifetimeScope     （シーン固有の登録はまだ無い）
+TitleLifetimeScope    GameStartButtonPresenter / SceneBgmPlayer（Bgm.Title）
+HomeLifetimeScope     CreditModel / HomePresenter / SceneBgmPlayer（Bgm.Title）
+MainLifetimeScope     SceneBgmPlayer（Bgm.Main）
 ```
 
 - 各シーンの `Injector/` フォルダに `*LifetimeScope.cs` を置く
@@ -102,13 +103,13 @@ OptionModalPresenter
 - 非同期ロードの完了待ちは `await _store.Loaded` の形で行う。シーン破棄で止まるよう `AttachExternalCancellation(ct)` でキャンセルを伝え、`OperationCanceledException` は正常系として catch する（`Store` 系の仕組みは後述「アセット管理（Addressables）」を参照）
 
 ```csharp
-// 例: AudioManager (Title シーン)
+// 例: SceneBgmPlayer（Common。各シーンの BGM を流す）
 public async UniTask StartAsync(CancellationToken cancellation = default)
 {
     try
     {
         await _soundStore.Loaded.AttachExternalCancellation(cancellation);
-        _soundPlayer.PlayBGM(_soundStore.TitleBGM);
+        _soundPlayer.PlayBGM(_soundStore.GetBgm(_bgm));
     }
     catch (OperationCanceledException)
     {
@@ -145,13 +146,17 @@ public async UniTask StartAsync(CancellationToken cancellation = default)
 
 新しいシーンで表示前に待ちたい非同期処理がある場合は、そのシーンの GameObject にアタッチした MonoBehaviour（Presenter など）に `ISceneReady` を実装し、準備完了時に `ReadyAsync` を完了させるだけでよい（実装が無いシーンは素通りする任意フック）。DI に登録しただけの純粋 C# クラスは検索対象外なので注意（実装例は [patterns.md](patterns.md)「4. シーン表示前に非同期初期化を待つ（ISceneReady）」）。
 
+ISceneReady を待つのは `SceneTransitioner.Transit` による遷移だけで、起動直後（`BootLoader`）や Editor でシーンを直接 Play したとき（`CommonSceneLoader`）の初回ロードは対象外（暗幕も出さない）。初回表示のシーンで重い初期化が必要になったら、待機処理を共通化して初回ロードにも入れる。
+
 `ReadyAsync` がキャンセル以外の例外を投げても、暗幕が残り続けないよう `SceneTransitioner` 側で例外をログ出力して握りつぶし、フェードインは必ず実行する（`WaitReadySafelyAsync`）。実装側で初期化失敗を扱いたい場合は `ReadyAsync` 内で完結させること。
 
 ---
 
 ## サウンド設計
 
-- BGM: `AudioSource.loop = true`、`PlayBGM()` で差し替え
+- BGM: `AudioSource.loop = true`、`PlayBGM()` で差し替え。同じ曲がすでに流れていれば頭から再生し直さない
+- シーンごとの BGM は、各シーンの LifetimeScope に `SceneBgmPlayer` を流す曲（`Bgm` enum）付きで登録して決める: `builder.RegisterEntryPoint<SceneBgmPlayer>(Lifetime.Scoped).WithParameter(Bgm.Main);`。Title と Home は同じ曲なので、Title → Home では途切れずに流れ続ける
+- UI 操作の効果音は `UiSoundPlayer` の `PlayOpen()`（開く）/ `PlayClose()`（閉じる）/ `PlayDecide()`（決定）で鳴らす。どの操作にどの SE を使うかの対応は `UiSoundPlayer` にだけ書く
 - SE: `PlayOneShot()` で重ね再生
 - 音量は `OptionModel` が 0–1 で保持し、`BGMVolume` / `SEVolume`（`ReadOnlyReactiveProperty<float>`）で公開する
 - `SoundPlayer` は音量変化を Subscribe して AudioSource に即時反映（`BindVolume`）
@@ -184,9 +189,11 @@ Common の `Option/` は Presenter と `Option.uxml` / `Option.uss` を同じフ
 
 - アイコンクリックで表示、Close ボタンで非表示
 - 左側の退出ボタン（`ExitButton`）は現在シーンでラベルと遷移先が変わる。判定と遷移は `OptionExitRouter` が担い、`OptionPresenter` はモーダルの開閉と SE に専念する
-  - Main 以外: **「タイトルに戻る」** → Title シーンへ遷移
+  - Home: **「タイトルに戻る」** → Title シーンへ遷移
   - Main: **「ゲームをやめる」** → Home シーンへ遷移
-  - モーダルは Common で一度だけ生成して使い回すので、ラベルの差し替えは開くたびに `OptionExitRouter.CurrentLabel` を読んで `OptionModalPresenter.SetExitLabel()` で行う
+  - Title: 戻る先が無いので退出ボタンを表示しない（`OptionExitRouter.IsExitAvailable`）
+  - モーダルは Common で一度だけ生成して使い回すので、ラベルと表示の差し替えは開くたびに `OptionExitRouter.CurrentLabel` / `IsExitAvailable` を読んで `OptionModalPresenter.SetExit()` で行う
+- モーダルのアセットのロードが終わるまではアイコンを押しても開かない。ロードに失敗した場合はエラーログを出し、オーバーレイとアイコンを非表示にしてオプションを使えなくする（閉じられないオーバーレイを残さないため）
 - オーバーレイ（`rgba(0,0,0,0.55)`）がゲーム画面を暗幕。`picking-mode` は既定（`Position`）にして背後へのクリックを遮る（Title の全画面「PRESS START」などを暗幕越しに押させないため）
 - モーダルカードは画面中央に配置（`align-items: center; justify-content: center`）
 - UIDocument の SortingOrder は `1000`（重ね順の一覧は [design-system.md](design-system.md)「UIDocument の設定」を参照）

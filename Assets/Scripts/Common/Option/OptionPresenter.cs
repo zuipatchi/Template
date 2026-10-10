@@ -1,3 +1,4 @@
+using System;
 using Common.SoundManagement;
 using Common.Store;
 using Cysharp.Threading.Tasks;
@@ -12,21 +13,20 @@ namespace Common.Option
     {
         private OptionModel _optionModel;
         private ModalStore _modalStore;
-        private SoundStore _soundStore;
-        private SoundPlayer _soundPlayer;
+        private UiSoundPlayer _uiSoundPlayer;
         private OptionExitRouter _exitRouter;
         private OptionModalPresenter _modalPresenter;
+        private VisualElement _optionIcon;
         private VisualElement _overlay;
         private VisualElement _host;
         private readonly CompositeDisposable _disposables = new();
 
         [Inject]
-        public void Construct(ModalStore modalStore, OptionModel optionModel, SoundStore soundStore, SoundPlayer soundPlayer, OptionExitRouter exitRouter)
+        public void Construct(ModalStore modalStore, OptionModel optionModel, UiSoundPlayer uiSoundPlayer, OptionExitRouter exitRouter)
         {
             _modalStore = modalStore;
             _optionModel = optionModel;
-            _soundStore = soundStore;
-            _soundPlayer = soundPlayer;
+            _uiSoundPlayer = uiSoundPlayer;
             _exitRouter = exitRouter;
         }
 
@@ -40,17 +40,17 @@ namespace Common.Option
             }
 
             VisualElement root = uiDocument.rootVisualElement;
-            Image optionSliders = root.Q<Image>("OptionSliders");
+            _optionIcon = root.Q<Image>("OptionSliders");
             _overlay = root.Q<VisualElement>("ModalOverlay");
             _host = root.Q<VisualElement>("ModalHost");
 
-            if (optionSliders == null)
+            if (_optionIcon == null)
             {
                 Debug.LogError("OptionSliders が見つかりませんでした。");
                 return;
             }
 
-            optionSliders.RegisterCallback<ClickEvent>(_ => OpenModal());
+            _optionIcon.RegisterCallback<ClickEvent>(_ => OpenModal());
         }
 
         private void Start()
@@ -67,10 +67,21 @@ namespace Common.Option
         {
             if (_host == null)
             {
+                Disable("ModalHost が見つかりませんでした。");
                 return;
             }
 
-            await UniTask.WhenAll(_modalStore.Loaded, _soundStore.Loaded);
+            try
+            {
+                await UniTask.WhenAll(_modalStore.Loaded, _uiSoundPlayer.Loaded);
+            }
+            catch (Exception e)
+            {
+                // ロード失敗はほぼ Addressables の設定ミス。閉じられないオーバーレイを残さないよう、オプション自体を使えなくする
+                Disable($"オプションモーダルのアセットをロードできませんでした: {e.Message}");
+                return;
+            }
+
             TemplateContainer modal = _modalStore.Modal.Instantiate();
 
             _modalPresenter = new OptionModalPresenter(_optionModel, OnClickClose, OnClickExit);
@@ -80,11 +91,31 @@ namespace Common.Option
             CloseModal();
         }
 
+        // オーバーレイとオプションアイコンを隠し、オプションを開けなくする
+        private void Disable(string reason)
+        {
+            Debug.LogError($"{reason} オプションアイコンを非表示にします。");
+            if (_overlay != null)
+            {
+                _overlay.style.display = DisplayStyle.None;
+            }
+            if (_optionIcon != null)
+            {
+                _optionIcon.style.display = DisplayStyle.None;
+            }
+        }
+
         private void OpenModal()
         {
-            _modalPresenter?.SetExitLabel(_exitRouter.CurrentLabel);
+            // モーダルの準備が終わるまでは開かない（中身も閉じるボタンも無いオーバーレイが出てしまうため）
+            if (_modalPresenter == null)
+            {
+                return;
+            }
+
+            _modalPresenter.SetExit(_exitRouter.CurrentLabel, _exitRouter.IsExitAvailable);
             _overlay.style.display = DisplayStyle.Flex;
-            _soundPlayer.PlaySE(_soundStore.Enter2SE);
+            _uiSoundPlayer.PlayOpen();
         }
 
         private void CloseModal()
@@ -94,13 +125,13 @@ namespace Common.Option
 
         private void OnClickClose()
         {
-            _soundPlayer.PlaySE(_soundStore.Cancel1SE);
+            _uiSoundPlayer.PlayClose();
             CloseModal();
         }
 
         private void OnClickExit()
         {
-            _soundPlayer.PlaySE(_soundStore.Enter1SE);
+            _uiSoundPlayer.PlayDecide();
             CloseModal();
             _exitRouter.Execute();
         }

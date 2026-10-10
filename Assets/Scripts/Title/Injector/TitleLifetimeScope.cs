@@ -1,5 +1,5 @@
+using Common.SoundManagement;
 using Title.GameStartButton;
-using Title.Sound;
 using VContainer;
 using VContainer.Unity;
 
@@ -10,7 +10,7 @@ namespace Title.Injector
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterComponentInHierarchy<GameStartButtonPresenter>().AsSelf();
-            builder.RegisterEntryPoint<AudioManager>(Lifetime.Scoped).AsSelf();
+            builder.RegisterEntryPoint<SceneBgmPlayer>(Lifetime.Scoped).WithParameter(Bgm.Title);
         }
     }
 }

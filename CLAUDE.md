@@ -43,7 +43,7 @@ Unity で新しくゲームを作るときに利用する Unity 6 (6000.3.18f1) 
 - DI は VContainer（`Find()` / static 禁止）
 - 状態管理は R3 の `ReactiveProperty<T>`（Model → Presenter の単方向フロー）
 - アセットは Addressables（`Resources.Load` 禁止）
-- UI は UI Toolkit / UXML + USS（uGUI 禁止）。スタイルはインラインでなく USS ファイルに定義してクラスで適用する
+- UI は UI Toolkit / UXML + USS（uGUI 禁止。例外は VFX を UI Toolkit より手前に合成する場合のみ。[docs/effects.md](docs/effects.md) 参照）。スタイルはインラインでなく USS ファイルに定義してクラスで適用する
 - 新しいシーンを作成するときは右上エリアに UI 要素を配置しない（Common シーンのオプションアイコンが `right:0 / top:0` の 60×60px に重なるため）。詳細は [docs/design-system.md](docs/design-system.md) を参照
 
 ## コーディング規約 (.editorconfig)
@@ -87,9 +87,11 @@ dotnet format Common.csproj --no-restore --include <file>
 | 遷移演出（暗幕が出ている間はクリックを遮断） | [Assets/Scripts/Common/Transition/TransitionPresenter.cs](Assets/Scripts/Common/Transition/TransitionPresenter.cs) |
 | 遷移の暗幕の見た目 | [Assets/Scripts/Common/Transition/Transition.uss](Assets/Scripts/Common/Transition/Transition.uss) |
 | サウンド再生 | [Assets/Scripts/Common/SoundManagement/SoundPlayer.cs](Assets/Scripts/Common/SoundManagement/SoundPlayer.cs) |
+| UI 操作の効果音（開く・閉じる・決定） | [Assets/Scripts/Common/SoundManagement/UiSoundPlayer.cs](Assets/Scripts/Common/SoundManagement/UiSoundPlayer.cs) |
+| シーンの BGM（各シーンの LifetimeScope に `Bgm` 付きで登録） | [Assets/Scripts/Common/SoundManagement/SceneBgmPlayer.cs](Assets/Scripts/Common/SoundManagement/SceneBgmPlayer.cs) |
 | ボリューム状態モデル | [Assets/Scripts/Common/Option/OptionModel.cs](Assets/Scripts/Common/Option/OptionModel.cs) |
 | オプションモーダル UI バインド | [Assets/Scripts/Common/Option/OptionModalPresenter.cs](Assets/Scripts/Common/Option/OptionModalPresenter.cs) |
-| オプション退出ボタンの分岐（Main は「ゲームをやめる」、他は「タイトルに戻る」） | [Assets/Scripts/Common/Option/OptionExitRouter.cs](Assets/Scripts/Common/Option/OptionExitRouter.cs) |
+| オプション退出ボタンの分岐（Main は「ゲームをやめる」、Home は「タイトルに戻る」、Title では非表示） | [Assets/Scripts/Common/Option/OptionExitRouter.cs](Assets/Scripts/Common/Option/OptionExitRouter.cs) |
 | Store 共通基底クラス（サブクラスは `LoadAsync<T>(address)` でロード） | [Assets/Scripts/Common/Store/AssetStoreBase.cs](Assets/Scripts/Common/Store/AssetStoreBase.cs) |
 | Home 画面の UI バインド | [Assets/Scripts/Home/HomePresenter.cs](Assets/Scripts/Home/HomePresenter.cs) |
 | クレジット項目（担当者名の書き換え先） | [Assets/Scripts/Home/CreditModel.cs](Assets/Scripts/Home/CreditModel.cs) |

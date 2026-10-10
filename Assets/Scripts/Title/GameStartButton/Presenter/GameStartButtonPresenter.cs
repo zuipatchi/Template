@@ -1,6 +1,5 @@
 using Common.SceneManagement;
 using Common.SoundManagement;
-using Common.Store;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -14,8 +13,7 @@ namespace Title.GameStartButton
     public class GameStartButtonPresenter : MonoBehaviour
     {
         private SceneTransitioner _sceneTransitioner;
-        private SoundStore _soundStore;
-        private SoundPlayer _soundPlayer;
+        private UiSoundPlayer _uiSoundPlayer;
         [SerializeField] private Scenes _nextScene;
         // 点滅の片道（不透明 → 最も薄い状態）にかける秒数
         [SerializeField] private float _blinkDuration = 0.6f;
@@ -26,11 +24,10 @@ namespace Title.GameStartButton
         private Tweener _blinkTween;
 
         [Inject]
-        public void Construct(SceneTransitioner sceneTransitioner, SoundStore soundStore, SoundPlayer soundPlayer)
+        public void Construct(SceneTransitioner sceneTransitioner, UiSoundPlayer uiSoundPlayer)
         {
             _sceneTransitioner = sceneTransitioner;
-            _soundStore = soundStore;
-            _soundPlayer = soundPlayer;
+            _uiSoundPlayer = uiSoundPlayer;
         }
 
         private void Awake()
@@ -65,7 +62,7 @@ namespace Title.GameStartButton
         {
             StopBlink();
             _gameStartButton.SetEnabled(false);
-            _soundPlayer.PlaySE(_soundStore.Enter1SE);
+            _uiSoundPlayer.PlayDecide();
             _sceneTransitioner.Transit(_nextScene).Forget();
         }
 

@@ -62,8 +62,8 @@ builder.Register<YourService>(Lifetime.Scoped);
 
 **③ UI 要素の取得は `Awake()` ではなく `IStartable.Start()` で行う**
 
-`UIDocument` の visualTree は `UIDocument.OnEnable()` で構築される。シーンロード時は「全コンポーネントの `Awake` → 全コンポーネントの `OnEnable`」の順で呼ばれるため、
-**`Awake()` の時点では `rootVisualElement` にツリーが入っていない可能性がある**（`root.Q<Button>(...)` が null を返す）。
+`UIDocument` の visualTree は `UIDocument.OnEnable()` で構築される。Unity は GameObject（コンポーネント）ごとに `Awake` と `OnEnable` を続けて呼ぶので、
+自分の `Awake()` が UIDocument の `OnEnable()` より先に呼ばれると、**`rootVisualElement` にツリーが入っていない**（`root.Q<Button>(...)` が null を返す）。どちらが先になるかは実行順に依存するため、当てにしない。
 
 VContainer の `IStartable.Start()` は `LifetimeScope.Build()` 完了後に呼ばれ、`OnEnable` より確実に後なので、ここで View を組み立てる。
 
@@ -82,6 +82,8 @@ public sealed class YourPresenter : MonoBehaviour, IStartable
 ```
 
 実装例は [HomePresenter](../Assets/Scripts/Home/HomePresenter.cs)。
+
+> 既存の例外: Common の `OptionPresenter` / `TransitionPresenter` は `Awake()`、Title の `GameStartButtonPresenter` は `OnEnable()` で UI 要素を取得している。いずれも同じ GameObject の UIDocument を使い、Unity の確認で正しく動くことを確かめてあるのでそのままにしている。新しく書く Presenter は上の `IStartable.Start()` の形にする。
 
 ---
 

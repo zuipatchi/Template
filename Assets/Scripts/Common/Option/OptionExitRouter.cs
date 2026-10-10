@@ -7,6 +7,7 @@ namespace Common.Option
     /// <summary>
     /// オプションモーダルの退出ボタンの文言と遷移先を、現在のシーンに応じて決めるクラス。
     /// Main では「ゲームをやめる」で Home へ、それ以外では「タイトルに戻る」で Title へ。
+    /// Title では戻る先が無いため、退出ボタンを出さない。
     /// </summary>
     public sealed class OptionExitRouter
     {
@@ -22,6 +23,9 @@ namespace Common.Option
 
         // モーダルは Common で一度だけ生成して使い回すため、開くたびに現在シーンの文言を取り直す。
         public string CurrentLabel => IsInMainScene() ? QuitGameLabel : BackToTitleLabel;
+
+        // Title で「タイトルに戻る」を押しても同じシーンへの遷移になり何も起きないため、ボタン自体を出さない。
+        public bool IsExitAvailable => SceneManager.GetActiveScene().buildIndex != (int)Scenes.Title;
 
         /// <summary>
         /// 退出を実行する。Main では Home へ、それ以外は Title へ遷移する。

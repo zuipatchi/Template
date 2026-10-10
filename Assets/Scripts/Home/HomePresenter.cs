@@ -1,6 +1,5 @@
 using Common.SceneManagement;
 using Common.SoundManagement;
-using Common.Store;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,8 +16,7 @@ namespace Home
     {
         private CreditModel _creditModel;
         private SceneTransitioner _sceneTransitioner;
-        private SoundStore _soundStore;
-        private SoundPlayer _soundPlayer;
+        private UiSoundPlayer _uiSoundPlayer;
 
         private HomeView _view;
 
@@ -26,13 +24,11 @@ namespace Home
         public void Construct(
             CreditModel creditModel,
             SceneTransitioner sceneTransitioner,
-            SoundStore soundStore,
-            SoundPlayer soundPlayer)
+            UiSoundPlayer uiSoundPlayer)
         {
             _creditModel = creditModel;
             _sceneTransitioner = sceneTransitioner;
-            _soundStore = soundStore;
-            _soundPlayer = soundPlayer;
+            _uiSoundPlayer = uiSoundPlayer;
         }
 
         // UIDocument の visualTree は OnEnable で構築されるため、Awake ではなく
@@ -53,19 +49,19 @@ namespace Home
         private void OnClickGameStart()
         {
             _view.SetInteractable(false);
-            _soundPlayer.PlaySE(_soundStore.Enter1SE);
+            _uiSoundPlayer.PlayDecide();
             _sceneTransitioner.Transit(Scenes.Main).Forget();
         }
 
         private void OnClickCredit()
         {
-            _soundPlayer.PlaySE(_soundStore.Enter2SE);
+            _uiSoundPlayer.PlayOpen();
             _view.SetCreditVisible(true);
         }
 
         private void OnClickCloseCredit()
         {
-            _soundPlayer.PlaySE(_soundStore.Cancel1SE);
+            _uiSoundPlayer.PlayClose();
             _view.SetCreditVisible(false);
         }
     }

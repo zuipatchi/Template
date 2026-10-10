@@ -23,8 +23,10 @@ UI Toolkit の `PanelSettings` デフォルトは `ScreenSpaceOverlay` モード
 
 ```
 [エフェクト専用カメラ] → RenderTexture → RawImage（加算ブレンド）→ Canvas（SortingOrder=100）
-                                                                        ↑ UI Toolkit より上に描画される
+                                                                        ↑ シーンの UI より手前に描画される
 ```
+
+> このテンプレートの UIDocument は、シーンの UI が SortingOrder `0`、オプションが `1000`、遷移の暗幕が `2000`（[design-system.md](design-system.md)「UIDocument の設定」）。エフェクトはシーンの UI より手前・オプションと暗幕より奥に置きたいので `100` にしている。ただし uGUI の Canvas と UIDocument の SortingOrder が同じ基準で並ぶかは未検証なので、エフェクトを実装するときに重なりを確認すること。
 
 **実装手順:**
 
@@ -55,7 +57,7 @@ camObj.transform.SetPositionAndRotation(mainCam.transform.position, mainCam.tran
 GameObject canvasObj = new GameObject("EffectCanvas");
 Canvas canvas = canvasObj.AddComponent<Canvas>();
 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-canvas.sortingOrder = 100; // UI Toolkit より上
+canvas.sortingOrder = 100; // シーンの UI（0）より手前、オプション（1000）・遷移の暗幕（2000）より奥
 
 // 5. RawImage で RT を表示（加算ブレンドのカスタムシェーダー必須・下記2参照）
 // ※ Shader.Find はビルドに含まれないため [SerializeField] で参照を保持すること

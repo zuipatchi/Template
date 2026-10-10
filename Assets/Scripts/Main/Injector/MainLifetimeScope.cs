@@ -1,3 +1,4 @@
+using Common.SoundManagement;
 using VContainer;
 using VContainer.Unity;
 
@@ -8,6 +9,7 @@ namespace Main.Injector
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.RegisterEntryPoint<SceneBgmPlayer>(Lifetime.Scoped).WithParameter(Bgm.Main);
             // Main シーン固有の登録をここに追加する
         }
     }

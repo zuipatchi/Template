@@ -44,6 +44,7 @@ Common シーンのオプションアイコン（`right:0 / top:0`、60×60px）
 | テキスト（見出し） | `rgb(240, 240, 255)` |
 | テキスト（本文・ラベル） | `rgb(180, 180, 210)` |
 | テキスト（ボタン） | `rgb(255, 255, 255)` |
+| テキスト（セカンダリボタン） | `rgb(230, 230, 245)` |
 | アクセント（ボタン背景） | `rgb(70, 90, 180)` |
 
 ---
@@ -166,43 +167,6 @@ Modal.uss の `.divider` だけは `margin-bottom: 20px`（モーダル内は行
     font-size: 14px;
     -unity-text-align: middle-center;
 }
-```
-
-**C# コードで生成したボタンのホバー・押下効果**
-
-`Button` をコードで生成してインラインスタイル（`button.style.backgroundColor = ...`）を設定している場合、USS の `:hover` / `:active` 擬似クラスは**インラインスタイルに上書きされて効かない**（インラインスタイルが優先される）。この場合は PointerEvent コールバックで対応する。
-
-```csharp
-private static void AddButtonHoverEffect(Button button, Color baseColor)
-{
-    Color hoverColor = new Color(
-        Mathf.Clamp01(baseColor.r + 0.12f),
-        Mathf.Clamp01(baseColor.g + 0.12f),
-        Mathf.Clamp01(baseColor.b + 0.12f), baseColor.a);
-    Color activeColor = new Color(
-        Mathf.Clamp01(baseColor.r - 0.1f),
-        Mathf.Clamp01(baseColor.g - 0.1f),
-        Mathf.Clamp01(baseColor.b - 0.1f), baseColor.a);
-    button.RegisterCallback<PointerEnterEvent>(_ => button.style.backgroundColor = new StyleColor(hoverColor));
-    button.RegisterCallback<PointerLeaveEvent>(_ => button.style.backgroundColor = new StyleColor(baseColor));
-    button.RegisterCallback<PointerDownEvent>(_ => button.style.backgroundColor = new StyleColor(activeColor));
-    button.RegisterCallback<PointerUpEvent>(_ => button.style.backgroundColor = new StyleColor(hoverColor));
-}
-```
-
-可能なら、インラインスタイルを使わず USS クラスのみでスタイルを管理して `:hover` / `:active` を効かせるほうが簡潔。
-
-**背景画像ボタンの押下フィードバック（scale 変化）**
-
-背景が PNG 画像で背景色変化が見えないボタンには、`scale` の transition でホバー拡大・押下縮小のフィードバックを付ける。
-
-```css
-.action-button {
-    transition-property: scale;
-    transition-duration: 0.1s;
-}
-.action-button:hover  { scale: 1.06 1.06; }
-.action-button:active { scale: 0.94 0.94; }
 ```
 
 ### モーダル（`.modal-card` / `.modal-title` / `.option-row` / `.modal-actions`）
