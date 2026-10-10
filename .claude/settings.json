@@ -16,7 +16,8 @@
       "Skill(update-config)",
       "Skill(update-config:*)",
       "Skill(unity-cli)",
-      "Skill(unity-cli:*)"
+      "Skill(unity-cli:*)",
+      "mcp__unity-editor-mcp"
     ],
     "deny": [
       "Bash(sudo:*)",
