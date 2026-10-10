@@ -11,9 +11,12 @@
       "Bash(mkdir:*)",
       "Bash(echo:*)",
       "Bash(Unity:*)",
+      "Bash(unity:*)",
       "Bash(gh:*)",
       "Skill(update-config)",
-      "Skill(update-config:*)"
+      "Skill(update-config:*)",
+      "Skill(unity-cli)",
+      "Skill(unity-cli:*)"
     ],
     "deny": [
       "Bash(sudo:*)",
