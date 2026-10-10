@@ -16,6 +16,9 @@
 *.asmdef    text
 *.asmref    text
 
+# シェルスクリプト（bash で実行するため CRLF にしない）
+*.sh        text eol=lf
+
 # Unity YAML（テキスト扱いだが手編集しないため diff は抑制）
 *.meta       text
 *.unity      text
