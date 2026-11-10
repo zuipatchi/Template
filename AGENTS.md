@@ -1,0 +1,117 @@
+# AGENTS.md
+
+このファイルはリポジトリで作業する Codex (Codex.ai/code) へのガイダンスを提供します。
+
+## プロジェクト概要
+
+Unity で新しくゲームを作るときに利用する Unity 6 (6000.3.18f1) ゲームテンプレート。BGM/SE 再生機能、Common シーンをベースとしたアディティブシーン管理、オプションモーダル、フェード遷移演出といった共通基盤を備える。
+
+## Unity 開発
+
+ビルドと実行は Unity Editor (Unity 6000.3.18f1) を通じて行う。独立したビルドスクリプトは存在しない。
+
+- **テスト実行 (EditMode)**: Unity Editor → Window → General → Test Runner → EditMode タブ → Run All
+- **テスト実行 (PlayMode)**: Unity Editor → Window → General → Test Runner → PlayMode タブ → Run All
+- **ビルド**: Unity Editor → File → Build Profiles → Build
+
+## テスト構成
+
+| ディレクトリ | 種別 | 内容 |
+|---|---|---|
+| [Assets/Tests/PlayMode/](Assets/Tests/PlayMode/) | PlayMode | シーンロードを伴う統合テスト |
+| [Assets/Tests/EditMode/](Assets/Tests/EditMode/) | EditMode | 純粋ロジックの単体テスト |
+
+**PlayMode テストの注意点:**
+- `CommonSceneLoader` が `static bool _loaded` を持つため、`[UnityTearDown]` で reflection リセットが必要
+- `IAsyncStartable.StartAsync` は VContainer からキャンセルトークンを受け取るため `catch (OperationCanceledException)` で正常終了させること
+- ボタンクリック模擬は `NavigationSubmitEvent`（`ClickEvent` では Clickable が反応しない）。オプションアイコンのように `RegisterCallback<ClickEvent>` で購読している要素は `ClickEvent` を送る
+- Common シーンの要素（オプションモーダル）や BGM を確かめるときは [CommonSceneTestHelper](Assets/Tests/PlayMode/CommonSceneTestHelper.cs) を使う（Addressables のロード完了を待つ処理・`SoundStore` の取得を含む）
+- Unity MCP の `run_tests` で PlayMode を実行するときは `async_tests: true` を付ける（Play モードに入るとドメインリロードで同期の要求が切れるため）
+
+**EditMode テストの注意点:**
+- asmdef の `includePlatforms` は `["Editor"]` にする（空にすると PlayMode テスト扱いになり、EditMode タブや `unity test --mode EditMode` で実行されない）
+- asmdef の `references` には、テストコードが直接使う型のアセンブリ GUID を追加する（テスト対象クラスが内部で依存するだけのアセンブリは不要）
+- `R3.dll` を `precompiledReferences` に追加が必要
+- `ReadOnlyReactiveProperty<T>` の値は `.CurrentValue`（`.Value` は不可）。`ReactiveProperty<T>` は `.Value` で読み書き可
+- R3 の Subscribe 拡張メソッドには `using R3;` が必要
+- UniTask の同期完了タスクは `.GetAwaiter().GetResult()` でテスト可能（null ガード等の即完了ケース）
+
+## アーキテクチャ
+
+詳細は [docs/architecture.md](docs/architecture.md) を参照。
+
+要点:
+- `Common` シーンが常駐し、他シーンはアディティブでロード（`Title → Home → Main`）
+- DI は VContainer（`Find()` / static 禁止）
+- 状態管理は R3 の `ReactiveProperty<T>`（Model → Presenter の単方向フロー）
+- アセットは Addressables（`Resources.Load` 禁止）
+- UI は UI Toolkit / UXML + USS（uGUI 禁止。例外は VFX を UI Toolkit より手前に合成する場合のみ。[docs/effects.md](docs/effects.md) 参照）。スタイルはインラインでなく USS ファイルに定義してクラスで適用する
+- 新しいシーンを作成するときは右上エリアに UI 要素を配置しない（Common シーンのオプションアイコンが `right:0 / top:0` の 60×60px に重なるため）。詳細は [docs/design-system.md](docs/design-system.md) を参照
+
+## コーディング規約 (.editorconfig)
+
+**エラーとして定義されているもの** (severity = error。IDE と `dotnet format` で検出される。Unity Editor のコンパイルではエラーにならない):
+
+- **命名**: 型・メソッド・プロパティ・定数は `PascalCase`、フィールドは `_camelCase`、引数・ローカル変数は `camelCase`
+- **アクセス修飾子必須** (インターフェースメンバー以外のすべてのメンバー)
+
+**スタイル設定として定義されているもの** (severity = warning。`dotnet format` と Stop hook で検出される。Unity Editor のコンパイルでは警告にならない):
+
+- **明示的な型を優先** (`var` は使用しない。`csharp_style_var_*` はすべて false)
+- 型が明らかな生成は `new()` で書く（`VisualElement row = new();`）
+- **readonly フィールド**を可能な限り使用
+- すべてのブロックに波括弧必須（単一行の `if (...) return;` も不可）、開き波括弧は新しい行に配置
+- `using` ディレクティブは名前空間の外側に記述し、System ディレクティブを先頭に並べる
+
+## リント (dotnet format)
+
+Unity が生成する csproj に対して `dotnet format` で .editorconfig の規約（空白・using 順序・命名など）をチェックできる。
+
+```bash
+# チェックのみ（自作コードは Common / Title / Home / Main / Tests.EditMode / Tests.PlayMode の各 csproj）
+dotnet format Common.csproj --verify-no-changes --no-restore
+# 自動修正（--include で対象ファイルを絞れる）
+dotnet format Common.csproj --no-restore --include <file>
+```
+
+- `Template.slnx` を指定するとパッケージのコードまでチェックされるため、自作コードの csproj を個別に指定する
+- csproj は Unity が再生成する（新規 .cs は Unity Editor で一度開くまで csproj に含まれない）。設定は csproj ではなく .editorconfig に書く
+- 信頼済みの Codex Stop hook（[.codex/hooks/dotnet-format-check.sh](.codex/hooks/dotnet-format-check.sh)）が、作業終了時に変更された .cs を自動チェックする。違反があれば最大 3 回まで修正させ、解消しなければユーザーへ報告させる
+
+## 主要ファイルの場所
+
+| 用途 | パス |
+|---|---|
+| Common DI 登録 | [Assets/Scripts/Common/Injector/CommonLifetimeScope.cs](Assets/Scripts/Common/Injector/CommonLifetimeScope.cs) |
+| シーン遷移ロジック | [Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs](Assets/Scripts/Common/SceneManagement/SceneTransitioner.cs) |
+| シーン定義（Build Profiles のシーンリストの buildIndex と一致させる enum） | [Assets/Scripts/Common/SceneManagement/Scenes.cs](Assets/Scripts/Common/SceneManagement/Scenes.cs) |
+| シーン準備完了通知（任意実装。非同期初期化の完了を待ってからフェードイン。シーン上の MonoBehaviour に実装する。DI 登録だけの純粋 C# クラスは検出されない） | [Assets/Scripts/Common/SceneManagement/ISceneReady.cs](Assets/Scripts/Common/SceneManagement/ISceneReady.cs) |
+| 遷移演出（暗幕が出ている間はクリックを遮断） | [Assets/Scripts/Common/Transition/TransitionPresenter.cs](Assets/Scripts/Common/Transition/TransitionPresenter.cs) |
+| 遷移の暗幕の見た目 | [Assets/Scripts/Common/Transition/Transition.uss](Assets/Scripts/Common/Transition/Transition.uss) |
+| サウンド再生 | [Assets/Scripts/Common/SoundManagement/SoundPlayer.cs](Assets/Scripts/Common/SoundManagement/SoundPlayer.cs) |
+| UI 操作の効果音（開く・閉じる・決定） | [Assets/Scripts/Common/SoundManagement/UiSoundPlayer.cs](Assets/Scripts/Common/SoundManagement/UiSoundPlayer.cs) |
+| シーンの BGM（各シーンの LifetimeScope に `Bgm` 付きで登録） | [Assets/Scripts/Common/SoundManagement/SceneBgmPlayer.cs](Assets/Scripts/Common/SoundManagement/SceneBgmPlayer.cs) |
+| ボリューム状態モデル | [Assets/Scripts/Common/Option/OptionModel.cs](Assets/Scripts/Common/Option/OptionModel.cs) |
+| オプションモーダル UI バインド | [Assets/Scripts/Common/Option/OptionModalPresenter.cs](Assets/Scripts/Common/Option/OptionModalPresenter.cs) |
+| オプション退出ボタンの分岐（Main は「ゲームをやめる」、Home は「タイトルに戻る」、Title では非表示） | [Assets/Scripts/Common/Option/OptionExitRouter.cs](Assets/Scripts/Common/Option/OptionExitRouter.cs) |
+| Store 共通基底クラス（サブクラスは `LoadAsync<T>(address)` でロード） | [Assets/Scripts/Common/Store/AssetStoreBase.cs](Assets/Scripts/Common/Store/AssetStoreBase.cs) |
+| Home 画面の UI バインド | [Assets/Scripts/Home/HomePresenter.cs](Assets/Scripts/Home/HomePresenter.cs) |
+| クレジット項目（担当者名の書き換え先） | [Assets/Scripts/Home/CreditModel.cs](Assets/Scripts/Home/CreditModel.cs) |
+| 日本語フォント（アセット） | [Assets/Font/](Assets/Font/) |
+| 既定フォント設定（全 UI へ NotoSansJP Bold を適用） | [Assets/UI Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss](Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss) |
+
+## ドキュメント
+
+- [docs/architecture.md](docs/architecture.md): アーキテクチャドキュメント
+- [docs/design-system.md](docs/design-system.md): UIデザインシステム（カラー・タイポグラフィ・コンポーネント）
+- [docs/patterns.md](docs/patterns.md): よく触る実装パターン集（Presenter追加・DI登録・destroyCancellationToken・DOTween×UI Toolkit・ISceneReady・シーン追加手順）
+- [docs/effects.md](docs/effects.md): パーティクル・VFX 実装ノウハウ（UI Toolkit との共存・加算ブレンド・worldBound 変換・再生時間調整）
+- [docs/product.md](docs/product.md): プロダクトドキュメント（実装済み機能の一覧）
+- [docs/game-backlog.md](docs/game-backlog.md): 作りたいゲームの仕様・アイデア（ユーザーが書く。`$source-command-feature` がここから項目を拾う）
+- [docs/tech-backlog.md](docs/tech-backlog.md): 技術バックログ（チェック系スキルが見送った項目・Unity での確認待ち。作業の最初に読み、見送った項目を追記する）
+
+## Asset Store アセット
+
+- Asset Store からダウンロードしたものは `Assets/AssetStore/` に配置する。このディレクトリも Git の管理対象。
+- このテンプレートから作るゲームのリポジトリは Private にする（Asset Store のアセットは再配布が禁止されていることが多く、Public に push すると公開扱いになる）。Public であるこのテンプレート自体には Asset Store のアセットをコミットしない。
+- DOTween (Demigiant) は `Assets/Plugins/` に配置済み（Git 管理対象）。

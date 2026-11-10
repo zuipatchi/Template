@@ -1,0 +1,23 @@
+---
+name: "source-command-ship"
+description: "/feature を使わずに手で変更した差分に対して、/feature と同じ検証ループ・ドキュメント同期・コミット・報告を行う"
+---
+
+# source-command-ship
+
+Use this skill when the user asks to run the migrated source command `ship`.
+
+## Command Template
+
+# ship: 手動で変更した差分を仕上げる
+
+`/feature` を使わずに手で変更した作業ツリーの差分を、`/feature` と同じ品質基準で仕上げてコミットする。
+
+**手順は [feature スキル](../source-command-feature/SKILL.md) の Phase 3〜6 をそのまま使う。** ここには `$source-command-feature` との違いだけを書く。共通方針は [共通方針](../../../.claude/shared/check-policy.md) に従う（途中でユーザーに確認を求めない）。
+
+## /feature との違い
+
+1. **Phase 1（ヒアリング）と Phase 2（実装）は行わない。** 代わりに `git status` と `git diff` で変更内容を把握する
+   - 差分にコードが含まれない（ドキュメントだけの変更）場合は、Phase 3 を飛ばして Phase 4 から行う
+2. **完了条件が無い**ので、差分から「この変更で何が起きるべきか」を読み取り、Phase 3-4（Unity MCP での動作確認）で確かめるシナリオを自分で決める。決めたシナリオは Phase 6 の報告に書く
+3. **今回の変更対象**は、`/ship` を呼んだ時点の作業ツリーの差分。ただし変更の意図が読み取れない差分（自動生成ファイル・改行コードだけの差分など）はコミットに含めず、Phase 6 で「含めなかったもの」として報告する

@@ -1,0 +1,153 @@
+---
+name: "source-command-feature"
+description: "docs/game-backlog.md の項目（引数なしならいちばん上、`/feature G-03` なら指定の ID）を、ヒアリング→実装→検証ループ（規約・セルフレビュー・テストコード・Unity MCP 動作確認）→ドキュメント同期→コミットまで一度に完結させ、最後にユーザーが Unity で確認する"
+---
+
+# source-command-feature
+
+Use this skill when the user asks to run the migrated source command `feature`.
+
+## Command Template
+
+# feature: 新機能実装（ループで完結させる）
+
+[docs/game-backlog.md](../../../docs/game-backlog.md) の項目を 1 つ選び、**実装・検証・ドキュメント更新・コミット** まで一度に終わらせ、最後にユーザーが Unity で確認する。
+
+**作るものはプロンプトではなく game-backlog.md から決める。**
+
+| 呼び方 | 対象 |
+|---|---|
+| `$source-command-feature` | game-backlog.md の「項目」欄のいちばん上の項目 |
+| `$source-command-feature G-03` | 指定した ID の項目 |
+
+- game-backlog.md に項目が無い、または指定した ID が無いときは、何も実装せずにその旨を伝えて終了する
+- 引数に作りたいものの説明が書かれていた場合は実装せず、その内容を game-backlog.md の末尾に新しい項目（状態: アイデア）として追記し、「優先順位を決めて `$source-command-feature` を実行してください」と伝えて終了する
+
+**人の判断が入るのは Phase 1 の承認と、Phase 6 の後の Unity での確認だけ。** Phase 2〜6 の間はユーザーに質問しない。迷った点は「見送り」として Phase 6 の報告に集める。共通方針は [共通方針](../../../.claude/shared/check-policy.md) に従う。
+
+```
+Phase 1 ヒアリング（承認）→ Phase 2 実装 → Phase 3 検証ループ（全部通るまで。最大 3 周）
+→ Phase 4 ドキュメント同期 → Phase 5 コミット → Phase 6 報告
+→ ユーザーが Unity で確認 → 指摘があれば Phase 2 からもう一度
+```
+
+---
+
+## Phase 1: ヒアリング・完了条件の合意
+
+1. 上の表に従って game-backlog.md から対象の項目を選び、その内容を仕様の土台にする
+   - 状態が「実装中」の項目は前回の作業が途中で止まったもの。項目に書かれた仕様・完了条件と `git log` を確認し、続きから再開する
+2. `AGENTS.md` と `docs/` を読み、関連するコードを調べる
+   - [docs/tech-backlog.md](../../../docs/tech-backlog.md) のうち、今回触る範囲に関係する項目も確認する（「決定: 〜」が付いたものはついでに対応する）
+3. 項目の記述だけでは決まらない点（画面・操作・数値など）を洗い出し、以下と一緒にユーザーに提示して、**承認を得てから次へ進む**（承認後は Phase 6 まで質問しない）:
+   - **何を作るか**（変更・追加するファイルの見込みを含む）
+   - **完了条件**: 「〇〇したら△△になる」の形で列挙し、それぞれに検証方法を 1 つ割り当てる
+     - `テストコード`: EditMode / PlayMode テストで自動判定できるもの
+     - `MCP`: Play モードで Editor を操作・観察して判定するもの（画面遷移・UI の表示・コンソールエラーの有無など）
+     - `目視`: 手触り・見た目の好みなど、ユーザーにしか判定できないもの（Phase 6 のチェックリストに回す）
+   - **追加・変更するテスト**
+4. 承認されたら、game-backlog.md の該当項目に合意した仕様と完了条件を書き込み、状態を「実装中」にする（セッションが途中で切れても再開できるように）
+
+Phase 6 の報告の後に同じ会話で受けた修正依頼（「〇〇が変」など）は、game-backlog.md を経由せず、Phase 1 を省略して Phase 2 から始めてよい。仕様の追加にあたる依頼は game-backlog.md に新しい項目として追記して終える。
+
+---
+
+## Phase 2: 実装
+
+- 承認された設計に従ってコードを書く。`AGENTS.md` のコーディング規約・アーキテクチャに従う
+- 完了条件のうち `テストコード` のものは、テスト（[Assets/Tests/](../../../Assets/Tests/)）も書く。AGENTS.md「テスト構成」の注意点に従う
+- シーン・Prefab・アセットの変更は、Unity Editor に接続できるとき（`unity status`）は `unity command` で Editor を操作して行う。`.unity` / `.prefab` / `.asset` の YAML を手で書き換えるのは、接続できる Editor が無いときだけ（その場合は Phase 6 で明記する）
+
+---
+
+## Phase 3: 検証ループ
+
+3-1〜3-4 を順に実行する。**どれかが失敗したら原因を直して 3-1 からやり直す。** 3 周しても通らない項目は、それ以上直さず Phase 6 で報告する（直すために仕様を変えない）。
+
+### 3-1. 規約チェック（dotnet format）
+
+変更した `.cs` が属する csproj に対して実行する（自作コードは Common / Title / Home / Main / Tests.EditMode / Tests.PlayMode）:
+
+```bash
+dotnet format <Project>.csproj --verify-no-changes --no-restore --include <変更したファイル...>
+```
+
+新規 `.cs` は Unity Editor で一度開くまで csproj に含まれないため、3-3 か 3-4 で Editor を起動した後にもう一度実行する。`dotnet format` が検出しない規約（DI 禁止事項・`Resources.Load`・uGUI・インラインスタイルなど）は 3-2 で確認する。
+
+### 3-2. セルフレビュー（差分のみ）
+
+`git diff` の変更箇所だけを対象に、[code-check](../source-command-code-check/SKILL.md) の観点 A〜F（バグ・規約・設計・パフォーマンス・重複・ファイル分割）でレビューする。
+
+- 直す基準・見送る基準は [共通方針](../../../.claude/shared/check-policy.md) の共通基準と、code-check の Phase 2 の観点別の基準に従う
+- 呼び出し元や関連クラスを読んで裏付けを取ってから指摘する
+
+### 3-3. テストコードの実行
+
+**このプロジェクトを開いている Editor が無いとき**（`unity status` に出てこない）に、CLI のバッチモードで実行する:
+
+```bash
+unity test . --mode EditMode --output Logs/Codex/editmode.xml --timeout 900
+unity test . --mode PlayMode --output Logs/Codex/playmode.xml --timeout 900
+```
+
+- 終了コード `0` = 全件成功、`8` = テストが失敗（結果 XML の失敗ケースを読んで直す）、`6` = 実行できなかった（コンパイルエラー・ライセンス・タイムアウトなど。ログを読んで原因を直す）
+- 数分かかることがあるので Bash の `run_in_background` で実行し、完了通知を待つ
+- **Editor が開いているときはバッチモードが使えない**（プロジェクトがロックされる）。代わりに Unity MCP の `run_tests` で実行する（`mode: "editor"` と `mode: "playmode"`。PlayMode は非同期で始まるので `test_status` で完了を待つ）。ユーザーの Editor を勝手に閉じない
+
+### 3-4. Unity MCP での動作確認
+
+完了条件のうち `MCP` のものを、実際に Editor を動かして確認する。
+
+1. `unity status` で接続できる Editor を確認する。無ければ `unity open .` で起動し、`unity status` が `ready` になるまで待つ
+   - 接続できない場合は Safe Mode（コンパイルエラー）を疑い、`unity pipeline list` で確認してコンパイルエラーを直す
+2. `unity command` で、この Editor が公開しているコマンドを確認する（コマンド名を推測しない）
+3. Play モードに入り（`unity command editor_play`）、完了条件のシナリオを操作する
+   - ボタン操作・状態の確認は `unity command eval '<C#>'` などで行う
+   - 画面は MCP の `capture_game_view`（`source: "screen"`）で撮影し、返ってきた画像を見て判定する。**`save_path` は指定しない**（`Assets/` 配下に保存され、アセットとして取り込まれてしまう）
+   - Unity MCP のツール（`editor_play` / `eval` / `get_console_logs` など）が使えるときはそれを優先し、使えないときは `unity command` を使う
+   - コンソールに例外・エラーが出ていないか確認する
+4. 確認が終わったら Play モードを抜ける。**Editor は閉じずに残す**（Phase 6 の後にユーザーがそのまま確認できるように）
+
+Editor に接続できなかった場合は、MCP の確認を「未実行」として Phase 6 で報告する（失敗扱いで仕様を変えたりしない）。
+
+---
+
+## Phase 4: ドキュメント同期
+
+今回の変更に関係する範囲だけ、ドキュメントをコードに合わせる。
+
+- `AGENTS.md`（主要ファイルの場所・規約・テストの注意点）、`docs/`、`README.md` を読み、変更で古くなった記述を直し、新しく追加したクラス・パターン・手順を追記する
+- `docs/product.md` の機能一覧に、追加した機能を載せる
+- game-backlog.md の項目を実装した場合は、その項目を game-backlog.md から消す（product.md に移したことになる）。一部だけ実装した場合は、残りを項目に書き残す
+- 今回の作業で見送った項目・未確認の項目を tech-backlog.md に追記し、解決した項目は消す（[共通方針](../../../.claude/shared/check-policy.md)「6. 技術バックログ」）
+- 照合のしかたは [docs-check](../source-command-docs-check/SKILL.md) の観点 B と同じ（コードを読んで裏付けを取る。コード側の未実装は直さず報告に回す）
+
+---
+
+## Phase 5: コミット
+
+- 今回の作業で変更したファイルだけを `git add` する（作業前から作業ツリーにあった無関係な変更は含めない）
+- 日本語のコミットメッセージで、コードとドキュメントをまとめて 1 コミットにしてよい
+- Phase 3 で通らなかった項目が残っていてもコミットする（Phase 6 で必ず報告する）。ただしコンパイルエラーが残っている場合はコミットしない
+
+---
+
+## Phase 6: 報告
+
+最後にまとめて報告する。
+
+1. **やったこと**: 変更内容の要約とコミットハッシュ
+2. **検証結果**: 次の表で、通った／失敗／未実行を明記する（失敗・未実行には理由を添える）
+
+   | 検証 | 結果 |
+   |---|---|
+   | 規約（dotnet format） | |
+   | セルフレビュー | |
+   | テストコード（EditMode / PlayMode） | |
+   | Unity MCP での動作確認 | |
+
+3. **完了条件ごとの判定**: Phase 1 の完了条件それぞれについて、どの検証で確認できたか
+4. **見送った項目**: 判断が必要なもの・3 周で直らなかったもの
+5. **Unity で確認してほしいこと**: 完了条件のうち `目視` のものを、具体的な操作手順のチェックリストにする（Editor は開いたままにしてある旨も伝える）
+
+ユーザーから指摘があれば、Phase 2 から同じ流れでもう一度回す。

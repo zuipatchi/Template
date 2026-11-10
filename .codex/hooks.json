@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git -c \"alias.codex-format=!bash .codex/hooks/dotnet-format-check.sh\" codex-format",
+            "timeout": 300,
+            "statusMessage": "dotnet format でコード規約をチェック中..."
+          }
+        ]
+      }
+    ]
+  }
+}
