@@ -60,14 +60,15 @@ CommonLifetimeScope   全シーン共通のシングルトンを登録
   ├── OptionPresenter
   ├── OptionModel
   ├── SoundPlayer
+  ├── SceneBgmPlayer
   ├── SoundStore
   ├── UiSoundPlayer
   ├── TransitionPresenter
   └── SceneTransitioner
 
-TitleLifetimeScope    GameStartButtonPresenter / SceneBgmPlayer（Bgm.Title）
-HomeLifetimeScope     CreditModel / HomePresenter / SceneBgmPlayer（Bgm.Title）
-MainLifetimeScope     SceneBgmPlayer（Bgm.Main）
+TitleLifetimeScope    GameStartButtonPresenter
+HomeLifetimeScope     CreditModel / HomePresenter
+MainLifetimeScope     ゲーム固有の登録
 ```
 
 - 各シーンの `Injector/` フォルダに `*LifetimeScope.cs` を置く
@@ -104,13 +105,13 @@ OptionModalPresenter
 - 非同期ロードの完了待ちは `await _store.Loaded` の形で行う。シーン破棄で止まるよう `AttachExternalCancellation(ct)` でキャンセルを伝え、`OperationCanceledException` は正常系として catch する（`Store` 系の仕組みは後述「アセット管理（Addressables）」を参照）
 
 ```csharp
-// 例: SceneBgmPlayer（Common。各シーンの BGM を流す）
+// 例: SceneBgmPlayer（Common。全画面共通の BGM を流す）
 public async UniTask StartAsync(CancellationToken ct = default)
 {
     try
     {
         await _soundStore.Loaded.AttachExternalCancellation(ct);
-        _soundPlayer.PlayBGM(_soundStore.GetBgm(_bgm));
+        _soundPlayer.PlayBGM(_soundStore.BackgroundMusic);
     }
     catch (OperationCanceledException)
     {
@@ -156,7 +157,7 @@ ISceneReady を待つのは `SceneTransitioner.Transit` による遷移だけで
 ## サウンド設計
 
 - BGM: `AudioSource.loop = true`、`PlayBGM()` で差し替え。同じ曲がすでに流れていれば頭から再生し直さない
-- シーンごとの BGM は、各シーンの LifetimeScope に `SceneBgmPlayer` を流す曲（`Bgm` enum）付きで登録して決める: `builder.RegisterEntryPoint<SceneBgmPlayer>(Lifetime.Scoped).WithParameter(Bgm.Main);`。Title と Home は同じ曲なので、Title → Home では途切れずに流れ続ける
+- Common の `SceneBgmPlayer` が `A_Cat_in_Palm_Beach` を起動時に流す。Title → Home → Main と遷移しても、Common にある同じ AudioSource がループ再生を続ける
 - UI 操作の効果音は `UiSoundPlayer` の `PlayOpen()`（開く）/ `PlayClose()`（閉じる）/ `PlayDecide()`（決定）で鳴らす。どの操作にどの SE を使うかの対応は `UiSoundPlayer` にだけ書く
 - SE: `PlayOneShot()` で重ね再生。SoundStore のロード前など clip が null のときは鳴らさない（例外にしない）
 - 音量は `OptionModel` が 0–1 で保持し、`BGMVolume` / `SEVolume`（`ReadOnlyReactiveProperty<float>`）で公開する

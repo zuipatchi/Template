@@ -11,7 +11,7 @@
 
 ## テンプレートが提供する基盤・共通機能
 
-- BGM / SE 再生（シーンごとの BGM 切り替え・UI 操作の効果音・音量調整と永続化）→ [architecture.md](architecture.md)「サウンド設計」
+- BGM / SE 再生（タイトルから流れ続ける共通 BGM・UI 操作の効果音・音量調整と永続化）→ [architecture.md](architecture.md)「サウンド設計」
 - Common シーンを常駐させたアディティブシーン管理・フェード画面遷移演出 → [architecture.md](architecture.md)「シーン構成」
 - オプションモーダル（音量設定など）→ [architecture.md](architecture.md)「オプションモーダル」
 - Title 画面（PRESS START の点滅演出・画面のどこをクリックしてもスタート）→ [design-system.md](design-system.md)「タイトル画面のプロンプト」

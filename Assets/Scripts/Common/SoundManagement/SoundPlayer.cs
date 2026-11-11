@@ -52,7 +52,7 @@ namespace Common.SoundManagement
             _disposables.Dispose();
         }
 
-        // 同じ曲がすでに流れていれば頭から再生し直さない（Title → Home のように同じ BGM のシーンへ移るとき）
+        // 同じ曲がすでに流れていれば頭から再生し直さない
         public void PlayBGM(AudioClip clip)
         {
             if (_bgmAudioSource.clip == clip && _bgmAudioSource.isPlaying)
