@@ -48,9 +48,9 @@ Unity Editor での確認が済んでいないもの。確認できたら削除�
 
 ### I-09 BGM をすべてメモリに常駐させている
 - 場所: [SoundStore.cs](../Assets/Scripts/Common/Store/SoundStore.cs)、BGM の AudioClip のインポート設定
-- 内容: 起動時に全 BGM（タイトル曲・メイン曲）を読み込み、アプリ終了まで保持している。メモリへの影響は AudioClip の Load Type（Decompress On Load か Streaming か）で大きく変わる
+- 内容: 起動時に共通 BGMを読み込み、アプリ終了まで保持している。メモリへの影響は AudioClip の Load Type（Decompress On Load か Streaming か）で大きく変わる
 - 直すなら: BGM の Load Type を Streaming にする。または BGM を使うシーンでだけロードし、離れるときに解放する（I-08 が前提）
-- 推奨: **今は保留し、BGM の曲数が増えたときか、モバイル・WebGL でメモリが問題になったときに、まず Load Type を Streaming にする**。今は 2 曲だけで、計測なしに効果を判断できないため
+- 推奨: **今は保留し、BGM の曲数が増えたときか、モバイル・WebGL でメモリが問題になったときに、まず Load Type を Streaming にする**。今は 1 曲だけで、計測なしに効果を判断できないため
 - 出典: I-04 の保留分（2026-10-10）
 
 ### I-10 EditMode テストの asmdef が直接使っていないアセンブリを参照している

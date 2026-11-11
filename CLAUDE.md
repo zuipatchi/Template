@@ -90,7 +90,7 @@ dotnet format Common.csproj --no-restore --include <file>
 | 遷移の暗幕の見た目 | [Assets/Scripts/Common/Transition/Transition.uss](Assets/Scripts/Common/Transition/Transition.uss) |
 | サウンド再生 | [Assets/Scripts/Common/SoundManagement/SoundPlayer.cs](Assets/Scripts/Common/SoundManagement/SoundPlayer.cs) |
 | UI 操作の効果音（開く・閉じる・決定） | [Assets/Scripts/Common/SoundManagement/UiSoundPlayer.cs](Assets/Scripts/Common/SoundManagement/UiSoundPlayer.cs) |
-| シーンの BGM（各シーンの LifetimeScope に `Bgm` 付きで登録） | [Assets/Scripts/Common/SoundManagement/SceneBgmPlayer.cs](Assets/Scripts/Common/SoundManagement/SceneBgmPlayer.cs) |
+| 全シーン共通の BGM（Common で開始） | [Assets/Scripts/Common/SoundManagement/SceneBgmPlayer.cs](Assets/Scripts/Common/SoundManagement/SceneBgmPlayer.cs) |
 | ボリューム状態モデル | [Assets/Scripts/Common/Option/OptionModel.cs](Assets/Scripts/Common/Option/OptionModel.cs) |
 | オプションモーダル UI バインド | [Assets/Scripts/Common/Option/OptionModalPresenter.cs](Assets/Scripts/Common/Option/OptionModalPresenter.cs) |
 | オプション退出ボタンの分岐（Main は「ゲームをやめる」、Home は「タイトルに戻る」、Title では非表示） | [Assets/Scripts/Common/Option/OptionExitRouter.cs](Assets/Scripts/Common/Option/OptionExitRouter.cs) |

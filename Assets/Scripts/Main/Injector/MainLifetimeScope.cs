@@ -1,4 +1,3 @@
-using Common.SoundManagement;
 using UnityEngine;
 using UnityEngine.UIElements;
 using VContainer;
@@ -13,7 +12,6 @@ namespace Main.Injector
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterEntryPoint<SceneBgmPlayer>(Lifetime.Scoped).WithParameter(Bgm.Main);
             builder.RegisterComponent(_snackShopDocument);
             builder.Register<SnackRoundModel>(Lifetime.Scoped);
             builder.RegisterEntryPoint<SnackShopPresenter>(Lifetime.Scoped);

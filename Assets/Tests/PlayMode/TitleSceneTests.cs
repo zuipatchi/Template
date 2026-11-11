@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Reflection;
 using Common.SceneManagement;
-using Common.SoundManagement;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -67,12 +66,13 @@ namespace Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator Titleシーンではタイトル曲が流れる()
+        public IEnumerator Titleシーンでは共通BGMが流れる()
         {
             yield return CommonSceneTestHelper.WaitForBgm();
 
-            AudioClip expected = CommonSceneTestHelper.ResolveSoundStore().GetBgm(Bgm.Title);
-            Assert.IsNotNull(expected, "タイトル曲がロードされていません");
+            AudioClip expected = CommonSceneTestHelper.ResolveSoundStore().BackgroundMusic;
+            Assert.IsNotNull(expected, "共通BGMがロードされていません");
+            Assert.AreEqual("A_Cat_in_Palm_Beach", expected.name);
             Assert.AreEqual(expected, CommonSceneTestHelper.FindBgmSource().clip);
         }
 

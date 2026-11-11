@@ -6,22 +6,16 @@ using VContainer.Unity;
 
 namespace Common.SoundManagement
 {
-    /// <summary>
-    /// シーンの開始時に、そのシーンの BGM を流すエントリポイント。
-    /// 各シーンの LifetimeScope で流す曲を指定して登録する:
-    /// <c>builder.RegisterEntryPoint&lt;SceneBgmPlayer&gt;(Lifetime.Scoped).WithParameter(Bgm.Title);</c>
-    /// </summary>
+    /// <summary>Common シーンで全画面共通の BGM を開始する。</summary>
     public sealed class SceneBgmPlayer : IAsyncStartable
     {
         private readonly SoundPlayer _soundPlayer;
         private readonly SoundStore _soundStore;
-        private readonly Bgm _bgm;
 
-        public SceneBgmPlayer(SoundPlayer soundPlayer, SoundStore soundStore, Bgm bgm)
+        public SceneBgmPlayer(SoundPlayer soundPlayer, SoundStore soundStore)
         {
             _soundPlayer = soundPlayer;
             _soundStore = soundStore;
-            _bgm = bgm;
         }
 
         public async UniTask StartAsync(CancellationToken ct = default)
@@ -29,11 +23,11 @@ namespace Common.SoundManagement
             try
             {
                 await _soundStore.Loaded.AttachExternalCancellation(ct);
-                _soundPlayer.PlayBGM(_soundStore.GetBgm(_bgm));
+                _soundPlayer.PlayBGM(_soundStore.BackgroundMusic);
             }
             catch (OperationCanceledException)
             {
-                // シーン破棄によるキャンセルは正常系なので何もしない
+                // Common シーンの破棄によるキャンセルは正常系なので何もしない
             }
         }
     }
