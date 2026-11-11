@@ -1,0 +1,29 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="SnackShop.uss"/>
+    <ui:VisualElement class="shop">
+        <ui:Label text="おやつ屋さん" class="shop-title"/>
+        <ui:VisualElement class="counter">
+            <ui:Label name="Progress" text="注文 1 / 5" class="progress"/>
+            <ui:Label name="Order" text="「プリンください」" class="order"/>
+            <ui:VisualElement name="Choices" class="choices">
+                <ui:Button name="Pudding" class="choice">
+                    <ui:VisualElement class="picture pudding" picking-mode="Ignore"/>
+                    <ui:Label text="プリン" picking-mode="Ignore"/>
+                </ui:Button>
+                <ui:Button name="Donut" class="choice">
+                    <ui:VisualElement class="picture donut" picking-mode="Ignore"/>
+                    <ui:Label text="ドーナツ" picking-mode="Ignore"/>
+                </ui:Button>
+                <ui:Button name="Shortcake" class="choice">
+                    <ui:VisualElement class="picture shortcake" picking-mode="Ignore"/>
+                    <ui:Label text="ショートケーキ" picking-mode="Ignore"/>
+                </ui:Button>
+            </ui:VisualElement>
+            <ui:Label name="Feedback" text="注文されたおやつを選んでね。" class="feedback"/>
+            <ui:VisualElement class="actions">
+                <ui:Button name="NextOrder" text="つぎへ" class="action is-hidden"/>
+                <ui:Button name="Restart" text="もう一度" class="action is-hidden"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

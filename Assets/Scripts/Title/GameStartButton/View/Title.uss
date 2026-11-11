@@ -1,40 +1,46 @@
-/* ─── Press Start ─── */
-/* 画面のどこをクリックしてもスタートできるよう、ボタン自体を全画面に広げる。
-   背景は透明なのでラベルだけが中央に見える。
-   右上のオプションアイコンは Common 側の UIDocument（SortingOrder 1000）が
-   前面にあるため、全画面ボタンに覆われてもクリックできる。 */
-.press-start {
+.cafe-title {
     flex-grow: 1;
-    margin-top: 0;
-    margin-right: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    background-color: rgba(0, 0, 0, 0);
-    border-left-width: 0;
-    border-right-width: 0;
-    border-top-width: 0;
-    border-bottom-width: 0;
-    color: rgb(240, 240, 255);
-    font-size: 28px;
-    letter-spacing: 8px;
+    align-items: center;
+    justify-content: center;
+    background-color: #39241f;
+    background-image: url("TitleCafe.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.cafe-sign {
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 75px;
+    padding: 20px 38px 40px;
+    border-radius: 24px;
+    background-color: rgba(48, 26, 20, 0.84);
+}
+.cafe-name {
+    color: #fff4de;
+    font-size: 64px;
     -unity-text-align: middle-center;
-    padding-top: 8px;
-    padding-right: 16px;
-    padding-bottom: 8px;
-    padding-left: 16px;
 }
-
-.press-start:hover {
-    background-color: rgba(0, 0, 0, 0);
-    color: rgb(255, 255, 255);
+.cafe-caption {
+    color: #f5c7a4;
+    font-size: 23px;
+    -unity-text-align: middle-center;
 }
-
-.press-start:focus {
+.press-start {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding-top: 130px;
     background-color: rgba(0, 0, 0, 0);
-    color: rgb(255, 255, 255);
+    border-width: 0;
+    color: #fff4de;
+    font-size: 22px;
+    -unity-text-align: middle-center;
 }
-
-.press-start:active {
+.press-start:hover, .press-start:focus, .press-start:active {
     background-color: rgba(0, 0, 0, 0);
-    scale: 0.97;
+    color: #ffffff;
 }

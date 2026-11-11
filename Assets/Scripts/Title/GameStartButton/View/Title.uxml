@@ -1,4 +1,10 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="Title.uss" />
-    <ui:Button text="PRESS START" name="GameStartButton" class="press-start"/>
+    <ui:VisualElement name="SnackTitleArt" class="cafe-title">
+        <ui:VisualElement class="cafe-sign" picking-mode="Ignore">
+            <ui:Label text="おやつ屋さん" class="cafe-name" picking-mode="Ignore"/>
+            <ui:Label text="注文を読んで、おやつを選ぼう" class="cafe-caption" picking-mode="Ignore"/>
+        </ui:VisualElement>
+        <ui:Button text="クリックしてスタート" name="GameStartButton" class="press-start"/>
+    </ui:VisualElement>
 </ui:UXML>
